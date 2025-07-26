@@ -1,4 +1,5 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.realtime_chat_app">
     <application
         android:label="realtime_chat_app"
         android:name="${applicationName}"
