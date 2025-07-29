@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1021871565508",
+    "project_id": "linktalk-634db",
+    "storage_bucket": "linktalk-634db.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1021871565508:android:520b627a57126f53593791",
+        "android_client_info": {
+          "package_name": "com.example.realtime_chat_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDlbvLGsI91W3BASaHqADCNSV7f94qxKCo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
