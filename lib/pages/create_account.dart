@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:realtime_chat_app/pages/CreateAccount.dart';
-import 'package:realtime_chat_app/pages/Methods.dart';
-import 'package:realtime_chat_app/pages/HomeScreen.dart';
+import 'package:realtime_chat_app/pages/methods.dart';
 
-class Logginscreen extends StatefulWidget {
-  const Logginscreen({super.key});
+class CreateAccount extends StatefulWidget {
+  const CreateAccount({super.key});
 
   @override
   // ignore: library_private_types_in_public_api
-  _LogginscreenState createState() => _LogginscreenState();
+  _CreateAccountState createState() => _CreateAccountState();
 }
 
-class _LogginscreenState extends State<Logginscreen> {
+class _CreateAccountState extends State<CreateAccount> {
+  final TextEditingController _name = TextEditingController();
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
   bool isLoading = false;
@@ -51,7 +50,7 @@ class _LogginscreenState extends State<Logginscreen> {
             SizedBox(
               width: size.width / 1.3,
               child: const Text(
-                "Sign in to continue",
+                "Create Account to continue",
                 style: TextStyle(
                   color: Color.fromARGB(255, 141, 141, 141),
                   fontSize: 25,
@@ -60,6 +59,14 @@ class _LogginscreenState extends State<Logginscreen> {
               ),
             ),
             SizedBox(height: size.height / 20),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 18.0),
+              child: Container(
+                width: size.width,
+                alignment: Alignment.center,
+                child: _buildField(size, "Name", Icons.account_box, _name),
+              ),
+            ),
             Container(
               width: size.width,
               alignment: Alignment.center,
@@ -73,24 +80,18 @@ class _LogginscreenState extends State<Logginscreen> {
                 child: _buildField(size, "Password", Icons.lock, _password),
               ),
             ),
-            SizedBox(height: size.height / 10),
+            SizedBox(height: size.height / 20),
 
-            _buildLoginButton(size),
-            SizedBox(height: size.height / 40),
-
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: GestureDetector(
-                onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const CreateAccount())
-                ),
-                child: const Text(
-                  "Create Account",
-                  style: TextStyle(
-                    color: Colors.blue,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
-                  ),
+            _buildCustomButton(size),
+            SizedBox(height: size.height / 20),
+            GestureDetector(
+              onTap: () => Navigator.pop(context),
+              child: const Text(
+                "Login",
+                style: TextStyle(
+                  color: Colors.blue,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ),
@@ -100,36 +101,39 @@ class _LogginscreenState extends State<Logginscreen> {
     );
   }
 
-  Widget _buildLoginButton(Size size) {
+  Widget _buildCustomButton(Size size) {
     return GestureDetector(
       onTap: () async {
-        if (_email.text.isNotEmpty && _password.text.isNotEmpty) {
+        if (_name.text.isNotEmpty &&
+            _email.text.isNotEmpty && 
+            _password.text.isNotEmpty) {
+
           setState(() {
             isLoading = true;
           });
 
           try {
-            final user = await logIn(_email.text, _password.text);
+            final user = await createAccount(_name.text, _email.text, _password.text);
             
             setState(() {
               isLoading = false;
             });
 
             if (user != null) {
-              print("Login Successfully");
-              _showSuccessMessage("Login successful! Welcome ");
-              // Navigate to home screen
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HomeScreen()));
+              print("Account Created Successfully");
+              if (mounted) {
+                Navigator.pop(context);
+              }
             } else {
-              print("Login Failed");
-              _showErrorMessage("Login failed. Please check your credentials.");
+              print("Account Creation Failed");
+              _showErrorMessage("Account creation failed. Please try again.");
             }
           } catch (e) {
             setState(() {
               isLoading = false;
             });
             print("Error: $e");
-            _showErrorMessage("Login error: ${e.toString()}");
+            _showErrorMessage("An error occurred: $e");
           }
         } else {
           _showErrorMessage("Please fill all fields");
@@ -144,7 +148,7 @@ class _LogginscreenState extends State<Logginscreen> {
         ),
         alignment: Alignment.center,
         child: const Text(
-          "Login",
+          "Create Account",
           style: TextStyle(
             color: Colors.white,
             fontSize: 22,
@@ -185,19 +189,9 @@ class _LogginscreenState extends State<Logginscreen> {
     }
   }
 
-  void _showSuccessMessage(String message) {
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(message),
-          backgroundColor: Colors.green,
-        ),
-      );
-    }
-  }
-
   @override
   void dispose() {
+    _name.dispose();
     _email.dispose();
     _password.dispose();
     super.dispose();
