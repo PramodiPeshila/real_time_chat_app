@@ -56,7 +56,8 @@ class _QRScannerState extends State<QRScanner> {
             flex: 4,
             child: Container(
               margin: const EdgeInsets.all(16),
-              child: ClipRRect( // Fixed: Use ClipRRect instead of overflow
+              child: ClipRRect(
+                // Fixed: Use ClipRRect instead of overflow
                 borderRadius: BorderRadius.circular(20),
                 child: QRView(
                   key: qrKey,
@@ -88,7 +89,11 @@ class _QRScannerState extends State<QRScanner> {
                       ),
                       child: Column(
                         children: [
-                          const Icon(Icons.check_circle, color: Colors.green, size: 32),
+                          const Icon(
+                            Icons.check_circle,
+                            color: Colors.green,
+                            size: 32,
+                          ),
                           const SizedBox(height: 8),
                           const Text(
                             'User Found!',
@@ -121,7 +126,11 @@ class _QRScannerState extends State<QRScanner> {
                       padding: const EdgeInsets.all(16),
                       child: const Column(
                         children: [
-                          Icon(Icons.qr_code_scanner, size: 48, color: Colors.grey),
+                          Icon(
+                            Icons.qr_code_scanner,
+                            size: 48,
+                            color: Colors.grey,
+                          ),
                           SizedBox(height: 8),
                           Text(
                             'Point camera at QR code to connect',
@@ -157,7 +166,8 @@ class _QRScannerState extends State<QRScanner> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ChatScreen(userId: userData), // Fixed: Now properly imported
+        builder: (context) =>
+            ChatScreen(userId: userData), // Fixed: Now properly imported
       ),
     );
   }

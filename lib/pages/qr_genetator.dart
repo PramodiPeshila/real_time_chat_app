@@ -29,7 +29,7 @@ class _QRGeneratorState extends State<QRGenerator> {
         'userId': currentUser!.uid,
         'email': currentUser!.email ?? 'No email',
         'displayName': currentUser!.displayName ?? 'User',
-        'type': 'chat_user'
+        'type': 'chat_user',
       }.toString();
     } else {
       // Fallback for testing without Firebase
@@ -37,7 +37,7 @@ class _QRGeneratorState extends State<QRGenerator> {
         'userId': 'demo_user_123',
         'email': 'demo@example.com',
         'displayName': 'Demo User',
-        'type': 'chat_user'
+        'type': 'chat_user',
       }.toString();
     }
   }
@@ -79,15 +79,11 @@ class _QRGeneratorState extends State<QRGenerator> {
                     ),
                   ],
                 ),
-                child: const Icon(
-                  Icons.person,
-                  size: 60,
-                  color: Colors.white,
-                ),
+                child: const Icon(Icons.person, size: 60, color: Colors.white),
               ),
-              
+
               const SizedBox(height: 20),
-              
+
               // User Info
               Text(
                 currentUser?.displayName ?? 'Demo User',
@@ -100,14 +96,11 @@ class _QRGeneratorState extends State<QRGenerator> {
               const SizedBox(height: 5),
               Text(
                 currentUser?.email ?? 'demo@example.com',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey[600],
-                ),
+                style: TextStyle(fontSize: 16, color: Colors.grey[600]),
               ),
-              
+
               const SizedBox(height: 30),
-              
+
               // QR Code Container
               Container(
                 padding: const EdgeInsets.all(20),
@@ -143,9 +136,9 @@ class _QRGeneratorState extends State<QRGenerator> {
                       )
                     else
                       const CircularProgressIndicator(),
-                    
+
                     const SizedBox(height: 15),
-                    
+
                     Text(
                       'Let others scan this code to start chatting!',
                       style: TextStyle(
@@ -158,9 +151,9 @@ class _QRGeneratorState extends State<QRGenerator> {
                   ],
                 ),
               ),
-              
+
               const SizedBox(height: 30),
-              
+
               // Action Buttons
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -185,7 +178,7 @@ class _QRGeneratorState extends State<QRGenerator> {
                     icon: const Icon(Icons.share),
                     label: const Text('Share'),
                   ),
-                  
+
                   // Scan Button
                   ElevatedButton.icon(
                     onPressed: () {
@@ -227,7 +220,9 @@ class _QRGeneratorState extends State<QRGenerator> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Share QR Code'),
-        content: const Text('QR code sharing feature will be implemented here.'),
+        content: const Text(
+          'QR code sharing feature will be implemented here.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
