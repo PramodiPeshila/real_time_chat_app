@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:realtime_chat_app/pages/profile.dart';
-import 'package:realtime_chat_app/pages/qr_scaner.dart';
+import 'package:realtime_chat_app/pages/qr_genetator.dart';
+import 'package:realtime_chat_app/pages/qr_scanner.dart';
 import 'package:realtime_chat_app/pages/home_screen.dart';
 
 class Footer extends StatefulWidget {
@@ -42,7 +43,7 @@ class _FooterState extends State<Footer> {
                 // Conversations (Left)
                 _buildNavItem(
                   icon: Icons.chat_bubble_outline,
-                  
+
                   label: "Conversations",
                   index: 0,
                   onTap: () {
@@ -58,7 +59,7 @@ class _FooterState extends State<Footer> {
                     print("Conversations tapped");
                   },
                 ),
-                
+
                 // Profile (Right)
                 _buildNavItem(
                   icon: Icons.person_outline,
@@ -80,7 +81,7 @@ class _FooterState extends State<Footer> {
               ],
             ),
           ),
-          
+
           // Center FAB
           Positioned(
             left: MediaQuery.of(context).size.width / 2 - 30,
@@ -92,18 +93,16 @@ class _FooterState extends State<Footer> {
                 });
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => const QRScanner(),
-                  ),
+                  MaterialPageRoute(builder: (context) => const QRGenerator()),
                 );
-                print("Center chat button tapped");
+                print("QR Generator opened");
               },
               child: Container(
                 width: 60,
                 height: 60,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: _selectedIndex == 1 
+                    colors: _selectedIndex == 1
                         ? [Colors.blue, const Color(0xFF4B0082)]
                         : [Colors.blue, const Color(0xFF483D8B)],
                     begin: Alignment.topLeft,
@@ -119,11 +118,7 @@ class _FooterState extends State<Footer> {
                   //   ),
                   // ],
                 ),
-                child: const Icon(
-                  Icons.qr_code,
-                  color: Colors.white,
-                  size: 28,
-                ),
+                child: const Icon(Icons.qr_code, color: Colors.white, size: 28),
               ),
             ),
           ),
@@ -151,11 +146,7 @@ class _FooterState extends State<Footer> {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              size: 24,
-              color: iconColor,
-            ),
+            Icon(icon, size: 24, color: iconColor),
             const SizedBox(height: 4),
             Text(
               label,
