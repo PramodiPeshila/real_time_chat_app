@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:realtime_chat_app/pages/profile.dart';
 import 'package:realtime_chat_app/pages/qr_genetator.dart';
-import 'package:realtime_chat_app/pages/qr_scanner.dart';
 import 'package:realtime_chat_app/pages/home_screen.dart';
 
 class Footer extends StatefulWidget {
