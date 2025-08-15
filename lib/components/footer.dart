@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:realtime_chat_app/pages/profile.dart';
 import 'package:realtime_chat_app/pages/qr_genetator.dart';
-import 'package:realtime_chat_app/pages/qr_scanner.dart';
 import 'package:realtime_chat_app/pages/home_screen.dart';
+import 'package:realtime_chat_app/pages/contacts_screen.dart';
 
 class Footer extends StatefulWidget {
   const Footer({super.key});
@@ -12,7 +12,7 @@ class Footer extends StatefulWidget {
 }
 
 class _FooterState extends State<Footer> {
-  int _selectedIndex = 1; // 0: Conversations, 1: Center (Chat), 2: Profile
+  int _selectedIndex = 1; // 0: Conversations, 1: Center (QR), 2: Contacts, 3: Profile
 
   @override
   Widget build(BuildContext context) {
@@ -43,8 +43,7 @@ class _FooterState extends State<Footer> {
                 // Conversations (Left)
                 _buildNavItem(
                   icon: Icons.chat_bubble_outline,
-
-                  label: "Conversations",
+                  label: "Home",
                   index: 0,
                   onTap: () {
                     setState(() {
@@ -56,18 +55,39 @@ class _FooterState extends State<Footer> {
                         builder: (context) => const HomeScreen(),
                       ),
                     );
-                    print("Conversations tapped");
+                    print("Home tapped");
                   },
                 ),
+
+                // Contacts (Center Left)
+                _buildNavItem(
+                  icon: Icons.contacts_outlined,
+                  label: "Contacts",
+                  index: 2,
+                  onTap: () {
+                    setState(() {
+                      _selectedIndex = 2;
+                    });
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ContactsScreen(),
+                      ),
+                    );
+                    print("Contacts tapped");
+                  },
+                ),
+
+                const SizedBox(width: 60), // Space for center FAB
 
                 // Profile (Right)
                 _buildNavItem(
                   icon: Icons.person_outline,
                   label: "Profile",
-                  index: 2,
+                  index: 3,
                   onTap: () {
                     setState(() {
-                      _selectedIndex = 2;
+                      _selectedIndex = 3;
                     });
                     Navigator.push(
                       context,
