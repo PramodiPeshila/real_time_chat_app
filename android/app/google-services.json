@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "1021871565508",
-    "project_id": "linktalk-634db",
-    "storage_bucket": "linktalk-634db.firebasestorage.app"
+    "project_number": "651427744951",
+    "project_id": "chatapp-13fd5",
+    "storage_bucket": "chatapp-13fd5.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1021871565508:android:520b627a57126f53593791",
+        "mobilesdk_app_id": "1:651427744951:android:549b9eb05c5d46d66b9132",
         "android_client_info": {
           "package_name": "com.example.realtime_chat_app"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDlbvLGsI91W3BASaHqADCNSV7f94qxKCo"
+          "current_key": "AIzaSyBO1rKU5QQtW6mQS0Lxo-mhGmHvCj9KbEk"
         }
       ],
       "services": {
