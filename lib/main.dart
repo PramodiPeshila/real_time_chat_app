@@ -19,11 +19,14 @@ Future<void> main() async {
   */
   try {
     // Check if Firebase is already initialized
-    if (Firebase.apps.isEmpty) {
-      await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
-      );
-    }
+   if (Firebase.apps.isEmpty) {
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+}
+print('Firebase apps: ${Firebase.apps.length}');
+final opts = Firebase.app().options;
+print('Firebase projectId: ${opts.projectId}');
+print('Firebase appId: ${opts.appId}');
+print('Firebase apiKey: ${opts.apiKey}');
   } catch (e) {
     print('Firebase initialization error: $e');
   }
