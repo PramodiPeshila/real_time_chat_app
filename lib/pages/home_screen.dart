@@ -28,6 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
             onPressed: () async {
               await logOut();
               if (mounted) {
+                //navigate to new screen
                 Navigator.pushNamedAndRemoveUntil(
                   context, 
                   '/login', 
