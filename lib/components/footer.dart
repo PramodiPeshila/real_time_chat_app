@@ -43,7 +43,7 @@ class _FooterState extends State<Footer> {
                 // Conversations (Left)
                 _buildNavItem(
                   icon: Icons.chat_bubble_outline,
-                  label: "Home",
+                  label: "Conversations",
                   index: 0,
                   onTap: () {
                     setState(() {
