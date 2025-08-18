@@ -22,22 +22,22 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         backgroundColor: Colors.blue,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout, color: Colors.white),
-            onPressed: () async {
-              await logOut();
-              if (mounted) {
-                //navigate to new screen
-                Navigator.pushNamedAndRemoveUntil(
-                  context, 
-                  '/login', 
-                  (route) => false,
-                );
-              }
-            },
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     icon: const Icon(Icons.logout, color: Colors.white),
+        //     onPressed: () async {
+        //       await logOut();
+        //       if (mounted) {
+        //         //navigate to new screen
+        //         Navigator.pushNamedAndRemoveUntil(
+        //           context, 
+        //           '/login', 
+        //           (route) => false,
+        //         );
+        //       }
+        //     },
+        //   ),
+        // ],
       ),
       body: Column(
         children: [
