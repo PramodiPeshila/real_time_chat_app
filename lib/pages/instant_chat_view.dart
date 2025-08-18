@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:realtime_chat_app/models/contact.dart';
 import 'package:realtime_chat_app/services/contact_service.dart';
 import 'package:realtime_chat_app/pages/chat_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class InstantChatView extends StatefulWidget {
   final String scannedData;
@@ -58,7 +59,10 @@ class _InstantChatViewState extends State<InstantChatView> {
 
   void _checkIfContact() async {
     if (userData != null) {
-      final isContact = await ContactService.isContact(userData!['userId'] ?? '');
+      final ownerId = FirebaseAuth.instance.currentUser?.uid;
+      final isContact = (ownerId != null && ownerId.isNotEmpty)
+          ? await ContactService.isContactRemote(ownerId, userData!['userId'] ?? '')
+          : await ContactService.isContact(userData!['userId'] ?? '');
       setState(() {
         isAddedToContacts = isContact;
       });
@@ -334,7 +338,8 @@ class _InstantChatViewState extends State<InstantChatView> {
         addedAt: DateTime.now(),
       );
 
-      final success = await ContactService.addContact(contact);
+      final ownerId = FirebaseAuth.instance.currentUser?.uid;
+      final success = await ContactService.saveContact(contact, ownerId: ownerId);
 
       if (success) {
         setState(() {
@@ -391,7 +396,8 @@ class _InstantChatViewState extends State<InstantChatView> {
     });
 
     try {
-      final success = await ContactService.removeContact(userData!['userId'] ?? '');
+      final ownerId = FirebaseAuth.instance.currentUser?.uid;
+      final success = await ContactService.deleteContact(userData!['userId'] ?? '', ownerId: ownerId);
 
       if (success) {
         setState(() {
