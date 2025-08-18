@@ -136,22 +136,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
          actions: [
-          IconButton(
-            icon: const Icon(Icons.logout, color: Colors.white),
-            onPressed: () async {
-              await logOut();
-              if (mounted) {
-                //navigate to new screen
-                Navigator.pushNamedAndRemoveUntil(
-                  context, 
-                  '/login', 
-                  (route) => false,
-                );
-              }
-            },
-          ),
-        ],
-      ),
+          // Edit / Save button
+          if (!_isEditing)
+            IconButton(
+              icon: const Icon(Icons.edit, color: Colors.white),
+              tooltip: 'Edit profile',
+              onPressed: () {
+                setState(() {
+                  _isEditing = true;
+                });
+              },
+            ),
+          if (_isEditing)
+            IconButton(
+              icon: const Icon(Icons.save, color: Colors.white),
+              tooltip: 'Save profile',
+              onPressed: () async {
+                await _updateProfile();
+              },
+            ),
+           IconButton(
+             icon: const Icon(Icons.logout, color: Colors.white),
+             onPressed: () async {
+               await logOut();
+               if (mounted) {
+                 //navigate to new screen
+                 Navigator.pushNamedAndRemoveUntil(
+                   context, 
+                   '/login', 
+                   (route) => false,
+                 );
+               }
+             },
+           ),
+         ],
+       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
@@ -249,8 +268,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                           const SizedBox(height: 16),
                           
-                          _buildInfoRow('User ID', user?.uid ?? 'N/A'),
-                          const SizedBox(height: 12),
+                          // _buildInfoRow('User ID', user?.uid ?? 'N/A'),
+                          // const SizedBox(height: 12),
                           _buildInfoRow(
                             'Account Created', 
                             user?.metadata.creationTime != null
@@ -272,19 +291,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(height: 20),
                   
                   // Generate QR Code Button
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton.icon(
-                      onPressed: () => _showQRCode(),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 15),
-                      ),
-                      icon: const Icon(Icons.qr_code),
-                      label: const Text('Generate My QR Code'),
-                    ),
-                  ),
+                  
                 ],
               ),
             ),
@@ -394,85 +401,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return '${date.day}/${date.month}/${date.year}';
   }
 
-  void _showQRCode() {
-    final user = _auth.currentUser;
-    if (user == null) return;
 
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Your QR Code'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.blue),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Column(
-                children: [
-                  // Placeholder for QR Code
-                  Container(
-                    width: 200,
-                    height: 200,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.qr_code, size: 64, color: Colors.grey),
-                          SizedBox(height: 8),
-                          Text(
-                            'QR Code\nGeneration\nComing Soon!',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.grey),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Your User ID:',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey.shade600,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade100,
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Text(
-                      user.uid,
-                      style: const TextStyle(
-                        fontSize: 10,
-                        fontFamily: 'monospace',
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
-          ),
-        ],
-      ),
-    );
-  }
 
   @override
   void dispose() {
