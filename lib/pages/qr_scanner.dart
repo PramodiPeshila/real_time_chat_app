@@ -3,7 +3,7 @@ import 'package:realtime_chat_app/components/footer.dart';
 import 'package:qr_code_scanner_plus/qr_code_scanner_plus.dart';
 import 'dart:io';
 
-import 'package:realtime_chat_app/pages/chat_screen.dart';
+import 'package:realtime_chat_app/pages/instant_chat_view.dart';
 
 class QRScanner extends StatefulWidget {
   const QRScanner({super.key});
@@ -15,7 +15,6 @@ class QRScanner extends StatefulWidget {
 class _QRScannerState extends State<QRScanner> {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   QRViewController? controller;
-  String? scannedData;
   bool flashOn = false;
 
   @override
@@ -78,68 +77,25 @@ class _QRScannerState extends State<QRScanner> {
             child: Container(
               padding: const EdgeInsets.all(16),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  if (scannedData != null)
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.green.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: Colors.green),
-                      ),
-                      child: Column(
-                        children: [
-                          const Icon(
-                            Icons.check_circle,
-                            color: Colors.green,
-                            size: 32,
-                          ),
-                          const SizedBox(height: 8),
-                          const Text(
-                            'User Found!',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.green,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            scannedData!,
-                            style: const TextStyle(fontSize: 14),
-                            textAlign: TextAlign.center,
-                          ),
-                          const SizedBox(height: 12),
-                          ElevatedButton(
-                            onPressed: () => _startChat(scannedData!),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green,
-                              foregroundColor: Colors.white,
-                            ),
-                            child: const Text('Start Chat'),
-                          ),
-                        ],
-                      ),
-                    )
-                  else
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      child: const Column(
-                        children: [
-                          Icon(
-                            Icons.qr_code_scanner,
-                            size: 48,
-                            color: Colors.grey,
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            'Point camera at QR code to connect',
-                            style: TextStyle(fontSize: 16, color: Colors.grey),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
-                      ),
-                    ),
+                  const Icon(
+                    Icons.qr_code_scanner,
+                    size: 48,
+                    color: Colors.grey,
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Point camera at QR code to connect',
+                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Instant chat will open automatically',
+                    style: TextStyle(fontSize: 14, color: Colors.blue),
+                    textAlign: TextAlign.center,
+                  ),
                 ],
               ),
             ),
@@ -153,21 +109,22 @@ class _QRScannerState extends State<QRScanner> {
   void _onQRViewCreated(QRViewController controller) {
     this.controller = controller;
     controller.scannedDataStream.listen((scanData) {
-      setState(() {
-        scannedData = scanData.code;
-      });
-      // Pause scanning after successful scan
-      controller.pauseCamera();
+      if (scanData.code != null && scanData.code!.isNotEmpty) {
+        // Pause scanning immediately
+        controller.pauseCamera();
+        
+        // Navigate directly to InstantChatView without showing "User Found"
+        _startInstantChat(scanData.code!);
+      }
     });
   }
 
-  void _startChat(String userData) {
-    // Parse the scanned data (should contain user ID)
+  void _startInstantChat(String userData) {
+    // Navigate to instant chat view instead of directly to chat
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) =>
-            ChatScreen(userId: userData), // Fixed: Now properly imported
+        builder: (context) => InstantChatView(scannedData: userData),
       ),
     );
   }
