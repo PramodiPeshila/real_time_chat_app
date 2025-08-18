@@ -3,6 +3,7 @@ import 'package:realtime_chat_app/components/footer.dart';
 import 'package:realtime_chat_app/services/contact_service.dart';
 import 'package:realtime_chat_app/models/contact.dart';
 import 'package:realtime_chat_app/pages/chat_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ContactsScreen extends StatefulWidget {
   const ContactsScreen({super.key});
@@ -27,7 +28,8 @@ class _ContactsScreenState extends State<ContactsScreen> {
     });
 
     try {
-      final loadedContacts = await ContactService.getContacts();
+      final ownerId = FirebaseAuth.instance.currentUser?.uid;
+      final loadedContacts = await ContactService.fetchContacts(ownerId: ownerId);
       setState(() {
         contacts = loadedContacts;
         isLoading = false;
@@ -252,7 +254,8 @@ class _ContactsScreenState extends State<ContactsScreen> {
 
   void _deleteContact(Contact contact) async {
     try {
-      final success = await ContactService.removeContact(contact.userId);
+      final ownerId = FirebaseAuth.instance.currentUser?.uid;
+      final success = await ContactService.deleteContact(contact.userId, ownerId: ownerId);
       
       if (success) {
         setState(() {
