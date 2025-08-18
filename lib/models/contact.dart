@@ -10,6 +10,8 @@ class Contact {
     required this.userId,
     required this.email,
     required this.displayName,
+
+    
     required this.addedAt,
   });
 
