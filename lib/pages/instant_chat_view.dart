@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:realtime_chat_app/models/contact.dart';
 import 'package:realtime_chat_app/services/contact_service.dart';
-import 'package:realtime_chat_app/pages/chat_screen.dart';
+import 'package:realtime_chat_app/services/connection_request_service.dart';
+import 'package:realtime_chat_app/pages/instant_chat_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class InstantChatView extends StatefulWidget {
@@ -244,7 +244,7 @@ class _InstantChatViewState extends State<InstantChatView> {
                                   )
                                 : const Icon(Icons.person_add),
                             label: Text(
-                              isLoadingContact ? 'Adding...' : 'Add Contact',
+                              isLoadingContact ? 'Sending...' : 'Add Contact',
                               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                             ),
                           ),
@@ -297,7 +297,7 @@ class _InstantChatViewState extends State<InstantChatView> {
                           const SizedBox(width: 10),
                           Expanded(
                             child: Text(
-                              'Start chatting instantly or add this person to your contacts for future conversations.',
+                              'Start chatting instantly or send a contact request. They will need to confirm before you both become contacts.',
                               style: TextStyle(
                                 fontSize: 14,
                                 color: Colors.grey[600],
@@ -315,10 +315,35 @@ class _InstantChatViewState extends State<InstantChatView> {
   }
 
   void _startChat() {
-    Navigator.pushReplacement(
+    if (userData == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Unable to start chat. User data not available.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    final receiverId = userData!['userId'] ?? '';
+    if (receiverId.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Unable to start chat. Missing receiver ID.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+  Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ChatScreen(userId: userData!['displayName'] ?? 'Unknown User'),
+        builder: (context) => InstantChatScreen(
+          receiverId: receiverId,
+          receiverName: userData!['displayName'] ?? 'Unknown User',
+          ephemeral: true,
+        ),
       ),
     );
   }
@@ -326,47 +351,61 @@ class _InstantChatViewState extends State<InstantChatView> {
   void _addToContacts() async {
     if (userData == null) return;
 
+    // Show confirmation dialog for User A
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Add Contact'),
+        content: Text('Do you want to send a contact request to ${userData!['displayName']}? They will need to confirm before you both become contacts.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Send Request'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm != true) return;
+
     setState(() {
       isLoadingContact = true;
     });
 
     try {
-      final contact = Contact(
-        userId: userData!['userId'] ?? '',
-        email: userData!['email'] ?? '',
-        displayName: userData!['displayName'] ?? 'Unknown User',
-        addedAt: DateTime.now(),
+      // Send connection request to User B
+      final success = await ConnectionRequestService.sendConnectionRequest(
+        toUserId: userData!['userId'] ?? '',
+        toUserName: userData!['displayName'] ?? 'Unknown User',
+        toUserEmail: userData!['email'] ?? '',
+        message: 'Hi! I would like to add you as a contact.',
       );
 
-      final ownerId = FirebaseAuth.instance.currentUser?.uid;
-      final success = await ContactService.saveContact(contact, ownerId: ownerId);
+      setState(() {
+        isLoadingContact = false;
+      });
 
       if (success) {
-        setState(() {
-          isAddedToContacts = true;
-          isLoadingContact = false;
-        });
-
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('${contact.displayName} added to contacts!'),
-              backgroundColor: Colors.green,
-              duration: const Duration(seconds: 2),
+              content: Text('Contact request sent to ${userData!['displayName']}! Waiting for their confirmation.'),
+              backgroundColor: Colors.blue,
+              duration: const Duration(seconds: 3),
             ),
           );
         }
       } else {
-        setState(() {
-          isLoadingContact = false;
-        });
-
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Contact already exists or failed to add'),
+              content: Text('Failed to send contact request. You may already be contacts or have a pending request.'),
               backgroundColor: Colors.orange,
-              duration: Duration(seconds: 2),
+              duration: Duration(seconds: 3),
             ),
           );
         }
@@ -379,7 +418,7 @@ class _InstantChatViewState extends State<InstantChatView> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error adding contact: $e'),
+            content: Text('Error sending contact request: $e'),
             backgroundColor: Colors.red,
             duration: const Duration(seconds: 2),
           ),
