@@ -25,12 +25,16 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<String> _getUserName(String userId) async {
     if (_userCache.containsKey(userId)) {
       final cached = _userCache[userId]!;
-      return (cached['displayName'] as String?) ?? (cached['name'] as String?) ?? 'Unknown';
+      return (cached['displayName'] as String?) ??
+          (cached['name'] as String?) ??
+          'Unknown';
     }
     final info = await InstantChatService.getUserInfo(userId);
     if (info != null) {
       _userCache[userId] = info;
-      return (info['displayName'] as String?) ?? (info['name'] as String?) ?? 'Unknown';
+      return (info['displayName'] as String?) ??
+          (info['name'] as String?) ??
+          'Unknown';
     }
     return 'Unknown';
   }
@@ -47,6 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
       return '${dt.hour}:$m';
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -93,14 +98,20 @@ class _HomeScreenState extends State<HomeScreen> {
                       return ListView.builder(
                         itemCount: docs.length,
                         itemBuilder: (context, index) {
-                          final data = docs[index].data() as Map<String, dynamic>;
-                          final List participants = (data['participants'] as List?) ?? [];
-                          final otherId = participants.firstWhere(
-                            (p) => p != _currentUserId,
-                            orElse: () => '',
-                          ) as String;
-                          final lastMsg = (data['lastMessage'] as String?) ?? '';
-                          final lastTime = data['lastMessageTime'] as Timestamp?;
+                          final data =
+                              docs[index].data() as Map<String, dynamic>;
+                          final List participants =
+                              (data['participants'] as List?) ?? [];
+                          final otherId =
+                              participants.firstWhere(
+                                    (p) => p != _currentUserId,
+                                    orElse: () => '',
+                                  )
+                                  as String;
+                          final lastMsg =
+                              (data['lastMessage'] as String?) ?? '';
+                          final lastTime =
+                              data['lastMessageTime'] as Timestamp?;
                           if (otherId.isEmpty) {
                             return const SizedBox.shrink();
                           }
@@ -113,13 +124,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                 leading: CircleAvatar(
                                   backgroundColor: Colors.blue,
                                   child: Text(
-                                    otherName.isNotEmpty ? otherName[0].toUpperCase() : 'U',
+                                    otherName.isNotEmpty
+                                        ? otherName[0].toUpperCase()
+                                        : 'U',
                                     style: const TextStyle(color: Colors.white),
                                   ),
                                 ),
                                 title: Text(
                                   otherName,
-                                  style: const TextStyle(fontWeight: FontWeight.w600),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                                 subtitle: Text(
                                   lastMsg,
@@ -128,7 +143,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                                 trailing: Text(
                                   _formatTime(lastTime),
-                                  style: const TextStyle(color: Colors.grey, fontSize: 12),
+                                  style: const TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 12,
+                                  ),
                                 ),
                                 onTap: () {
                                   Navigator.push(

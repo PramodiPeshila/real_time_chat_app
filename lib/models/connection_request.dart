@@ -1,11 +1,6 @@
 import 'dart:convert';
 
-enum ConnectionRequestStatus {
-  pending,
-  accepted,
-  declined,
-  expired
-}
+enum ConnectionRequestStatus { pending, accepted, declined, expired }
 
 class ConnectionRequest {
   final String requestId;
@@ -63,8 +58,12 @@ class ConnectionRequest {
         (e) => e.toString().split('.').last == (json['status'] ?? 'pending'),
         orElse: () => ConnectionRequestStatus.pending,
       ),
-      createdAt: DateTime.parse(json['createdAt'] ?? DateTime.now().toIso8601String()),
-      respondedAt: json['respondedAt'] != null ? DateTime.parse(json['respondedAt']) : null,
+      createdAt: DateTime.parse(
+        json['createdAt'] ?? DateTime.now().toIso8601String(),
+      ),
+      respondedAt: json['respondedAt'] != null
+          ? DateTime.parse(json['respondedAt'])
+          : null,
       message: json['message'],
     );
   }
@@ -108,7 +107,9 @@ class ConnectionRequest {
   bool get isExpired => status == ConnectionRequestStatus.expired;
 
   bool get isExpiredByTime {
-    final expiryTime = createdAt.add(const Duration(days: 7)); // Requests expire after 7 days
+    final expiryTime = createdAt.add(
+      const Duration(days: 7),
+    ); // Requests expire after 7 days
     return DateTime.now().isAfter(expiryTime);
   }
 }

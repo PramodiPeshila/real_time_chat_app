@@ -11,12 +11,13 @@ class ConnectionRequestsPage extends StatefulWidget {
   _ConnectionRequestsPageState createState() => _ConnectionRequestsPageState();
 }
 
-class _ConnectionRequestsPageState extends State<ConnectionRequestsPage> with TickerProviderStateMixin {
+class _ConnectionRequestsPageState extends State<ConnectionRequestsPage>
+    with TickerProviderStateMixin {
   late TabController _tabController;
   List<ConnectionRequest> pendingRequests = [];
   List<ConnectionRequest> sentRequests = [];
   bool isLoading = true;
-  
+
   @override
   void initState() {
     super.initState();
@@ -38,9 +39,13 @@ class _ConnectionRequestsPageState extends State<ConnectionRequestsPage> with Ti
     try {
       final currentUser = FirebaseAuth.instance.currentUser;
       if (currentUser != null) {
-        final pending = await ConnectionRequestService.getPendingRequests(currentUser.uid);
-        final sent = await ConnectionRequestService.getSentRequests(currentUser.uid);
-        
+        final pending = await ConnectionRequestService.getPendingRequests(
+          currentUser.uid,
+        );
+        final sent = await ConnectionRequestService.getSentRequests(
+          currentUser.uid,
+        );
+
         setState(() {
           pendingRequests = pending;
           sentRequests = sent;
@@ -57,11 +62,13 @@ class _ConnectionRequestsPageState extends State<ConnectionRequestsPage> with Ti
 
   Future<void> _handleAcceptRequest(ConnectionRequest request) async {
     try {
-      final success = await ConnectionRequestService.acceptConnectionRequest(request.requestId);
+      final success = await ConnectionRequestService.acceptConnectionRequest(
+        request.requestId,
+      );
       if (success) {
         _showSnackBar('Connection request accepted!');
         _loadRequests(); // Refresh the list
-        
+
         // Show option to start chat
         _showChatOption(request.fromUserName, request.fromUserId);
       } else {
@@ -74,7 +81,9 @@ class _ConnectionRequestsPageState extends State<ConnectionRequestsPage> with Ti
 
   Future<void> _handleDeclineRequest(ConnectionRequest request) async {
     try {
-      final success = await ConnectionRequestService.declineConnectionRequest(request.requestId);
+      final success = await ConnectionRequestService.declineConnectionRequest(
+        request.requestId,
+      );
       if (success) {
         _showSnackBar('Connection request declined');
         _loadRequests(); // Refresh the list
@@ -92,7 +101,9 @@ class _ConnectionRequestsPageState extends State<ConnectionRequestsPage> with Ti
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Connection Established!'),
-          content: Text('You are now connected with $userName. Would you like to start chatting?'),
+          content: Text(
+            'You are now connected with $userName. Would you like to start chatting?',
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
@@ -113,7 +124,10 @@ class _ConnectionRequestsPageState extends State<ConnectionRequestsPage> with Ti
                 );
               },
               style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-              child: const Text('Start Chat', style: TextStyle(color: Colors.white)),
+              child: const Text(
+                'Start Chat',
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           ],
         );
@@ -170,10 +184,7 @@ class _ConnectionRequestsPageState extends State<ConnectionRequestsPage> with Ti
           ? const Center(child: CircularProgressIndicator())
           : TabBarView(
               controller: _tabController,
-              children: [
-                _buildPendingRequestsList(),
-                _buildSentRequestsList(),
-              ],
+              children: [_buildPendingRequestsList(), _buildSentRequestsList()],
             ),
     );
   }
@@ -184,11 +195,7 @@ class _ConnectionRequestsPageState extends State<ConnectionRequestsPage> with Ti
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.inbox_outlined,
-              size: 80,
-              color: Colors.grey[400],
-            ),
+            Icon(Icons.inbox_outlined, size: 80, color: Colors.grey[400]),
             const SizedBox(height: 20),
             Text(
               'No pending requests',
@@ -202,10 +209,7 @@ class _ConnectionRequestsPageState extends State<ConnectionRequestsPage> with Ti
             Text(
               'When someone sends you a connection request, it will appear here.',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[500],
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.grey[500]),
             ),
           ],
         ),
@@ -228,11 +232,7 @@ class _ConnectionRequestsPageState extends State<ConnectionRequestsPage> with Ti
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.send_outlined,
-              size: 80,
-              color: Colors.grey[400],
-            ),
+            Icon(Icons.send_outlined, size: 80, color: Colors.grey[400]),
             const SizedBox(height: 20),
             Text(
               'No sent requests',
@@ -246,10 +246,7 @@ class _ConnectionRequestsPageState extends State<ConnectionRequestsPage> with Ti
             Text(
               'Your sent connection requests will appear here.',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[500],
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.grey[500]),
             ),
           ],
         ),
@@ -289,7 +286,7 @@ class _ConnectionRequestsPageState extends State<ConnectionRequestsPage> with Ti
                   ),
                   child: Center(
                     child: Text(
-                      request.fromUserName.isNotEmpty 
+                      request.fromUserName.isNotEmpty
                           ? request.fromUserName[0].toUpperCase()
                           : '?',
                       style: const TextStyle(
@@ -314,17 +311,11 @@ class _ConnectionRequestsPageState extends State<ConnectionRequestsPage> with Ti
                       ),
                       Text(
                         request.fromUserEmail,
-                        style: TextStyle(
-                          color: Colors.grey[600],
-                          fontSize: 14,
-                        ),
+                        style: TextStyle(color: Colors.grey[600], fontSize: 14),
                       ),
                       Text(
                         'Sent ${_formatDate(request.createdAt)}',
-                        style: TextStyle(
-                          color: Colors.grey[500],
-                          fontSize: 12,
-                        ),
+                        style: TextStyle(color: Colors.grey[500], fontSize: 12),
                       ),
                     ],
                   ),
@@ -437,7 +428,7 @@ class _ConnectionRequestsPageState extends State<ConnectionRequestsPage> with Ti
                   ),
                   child: Center(
                     child: Text(
-                      request.toUserName.isNotEmpty 
+                      request.toUserName.isNotEmpty
                           ? request.toUserName[0].toUpperCase()
                           : '?',
                       style: const TextStyle(
@@ -462,23 +453,20 @@ class _ConnectionRequestsPageState extends State<ConnectionRequestsPage> with Ti
                       ),
                       Text(
                         request.toUserEmail,
-                        style: TextStyle(
-                          color: Colors.grey[600],
-                          fontSize: 14,
-                        ),
+                        style: TextStyle(color: Colors.grey[600], fontSize: 14),
                       ),
                       Text(
                         'Sent ${_formatDate(request.createdAt)}',
-                        style: TextStyle(
-                          color: Colors.grey[500],
-                          fontSize: 12,
-                        ),
+                        style: TextStyle(color: Colors.grey[500], fontSize: 12),
                       ),
                     ],
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: statusColor.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(20),

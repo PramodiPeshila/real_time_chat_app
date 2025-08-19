@@ -5,13 +5,13 @@ import 'package:realtime_chat_app/services/contact_service.dart';
 
 class ConnectionRequestService {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  
+
   // Collection references
-  static CollectionReference<Map<String, dynamic>> get _requestsCollection => 
+  static CollectionReference<Map<String, dynamic>> get _requestsCollection =>
       _firestore.collection('connection_requests');
-  
-  static CollectionReference<Map<String, dynamic>> get _notificationsCollection => 
-      _firestore.collection('notifications');
+
+  static CollectionReference<Map<String, dynamic>>
+  get _notificationsCollection => _firestore.collection('notifications');
 
   // Generate a unique request ID
   static String _generateRequestId() {
@@ -33,14 +33,20 @@ class ConnectionRequestService {
       }
 
       // Check if a request already exists between these users
-      final existingRequest = await _getExistingRequest(currentUser.uid, toUserId);
+      final existingRequest = await _getExistingRequest(
+        currentUser.uid,
+        toUserId,
+      );
       if (existingRequest != null && existingRequest.isPending) {
         print('Connection request already exists');
         return false;
       }
 
       // Check if they are already contacts
-      final isAlreadyContact = await ContactService.isContactRemote(currentUser.uid, toUserId);
+      final isAlreadyContact = await ContactService.isContactRemote(
+        currentUser.uid,
+        toUserId,
+      );
       if (isAlreadyContact) {
         print('Users are already contacts');
         return false;
@@ -66,7 +72,8 @@ class ConnectionRequestService {
         userId: toUserId,
         type: 'connection_request',
         title: 'New Connection Request',
-        body: '${currentUser.displayName ?? 'Someone'} wants to connect with you',
+        body:
+            '${currentUser.displayName ?? 'Someone'} wants to connect with you',
         data: {'requestId': requestId, 'fromUserId': currentUser.uid},
       );
 
@@ -79,7 +86,9 @@ class ConnectionRequestService {
   }
 
   /// Get connection request by ID
-  static Future<ConnectionRequest?> getConnectionRequest(String requestId) async {
+  static Future<ConnectionRequest?> getConnectionRequest(
+    String requestId,
+  ) async {
     try {
       final doc = await _requestsCollection.doc(requestId).get();
       if (doc.exists && doc.data() != null) {
@@ -94,7 +103,10 @@ class ConnectionRequestService {
   }
 
   /// Check if there's an existing request between two users
-  static Future<ConnectionRequest?> _getExistingRequest(String fromUserId, String toUserId) async {
+  static Future<ConnectionRequest?> _getExistingRequest(
+    String fromUserId,
+    String toUserId,
+  ) async {
     try {
       // Check requests from fromUserId to toUserId
       final query1 = await _requestsCollection
@@ -130,7 +142,9 @@ class ConnectionRequestService {
   }
 
   /// Get all pending connection requests for a user (received)
-  static Future<List<ConnectionRequest>> getPendingRequests(String userId) async {
+  static Future<List<ConnectionRequest>> getPendingRequests(
+    String userId,
+  ) async {
     try {
       final snapshot = await _requestsCollection
           .where('toUserId', isEqualTo: userId)
@@ -179,13 +193,13 @@ class ConnectionRequestService {
       await _firestore.runTransaction((transaction) async {
         final requestRef = _requestsCollection.doc(requestId);
         final requestSnap = await transaction.get(requestRef);
-        
+
         if (!requestSnap.exists) {
           throw Exception('Request not found');
         }
 
         final data = requestSnap.data()!;
-        
+
         // Check if request is still pending
         if (data['status'] != 'pending') {
           throw Exception('Request is no longer pending');
@@ -228,13 +242,21 @@ class ConnectionRequestService {
         // Use correct ContactService structure: users/{ownerId}/contacts/{contactId}
         // Add fromUser to currentUser's contacts
         transaction.set(
-          _firestore.collection('users').doc(currentUser.uid).collection('contacts').doc(fromUserId),
+          _firestore
+              .collection('users')
+              .doc(currentUser.uid)
+              .collection('contacts')
+              .doc(fromUserId),
           fromContact,
         );
-        
+
         // Add currentUser to fromUser's contacts
         transaction.set(
-          _firestore.collection('users').doc(fromUserId).collection('contacts').doc(currentUser.uid),
+          _firestore
+              .collection('users')
+              .doc(fromUserId)
+              .collection('contacts')
+              .doc(currentUser.uid),
           toContact,
         );
       });
@@ -242,14 +264,15 @@ class ConnectionRequestService {
       // Get the fromUserId for notification
       final requestDoc = await _requestsCollection.doc(requestId).get();
       final fromUserId = requestDoc.data()?['fromUserId'] as String?;
-      
+
       if (fromUserId != null) {
         // Create notification for the requester (outside transaction)
         await _createNotification(
           userId: fromUserId,
           type: 'connection_accepted',
           title: 'Connection Accepted',
-          body: '${currentUser.displayName ?? 'Someone'} accepted your connection request',
+          body:
+              '${currentUser.displayName ?? 'Someone'} accepted your connection request',
           data: {'requestId': requestId, 'userId': currentUser.uid},
         );
       }
@@ -277,13 +300,13 @@ class ConnectionRequestService {
       await _firestore.runTransaction((transaction) async {
         final requestRef = _requestsCollection.doc(requestId);
         final requestSnap = await transaction.get(requestRef);
-        
+
         if (!requestSnap.exists) {
           throw Exception('Request not found');
         }
 
         final data = requestSnap.data()!;
-        
+
         // Check if request is still pending
         if (data['status'] != 'pending') {
           throw Exception('Request is no longer pending');
@@ -309,7 +332,8 @@ class ConnectionRequestService {
           userId: fromUserId!,
           type: 'connection_declined',
           title: 'Connection Declined',
-          body: '${currentUser.displayName ?? 'Someone'} declined your connection request',
+          body:
+              '${currentUser.displayName ?? 'Someone'} declined your connection request',
           data: {'requestId': requestId},
         );
       }
@@ -323,16 +347,25 @@ class ConnectionRequestService {
   }
 
   /// Check connection status between two users
-  static Future<String> getConnectionStatus(String currentUserId, String otherUserId) async {
+  static Future<String> getConnectionStatus(
+    String currentUserId,
+    String otherUserId,
+  ) async {
     try {
       // Check if they are already contacts
-      final isContact = await ContactService.isContactRemote(currentUserId, otherUserId);
+      final isContact = await ContactService.isContactRemote(
+        currentUserId,
+        otherUserId,
+      );
       if (isContact) {
         return 'connected';
       }
 
       // Check for pending requests
-      final existingRequest = await _getExistingRequest(currentUserId, otherUserId);
+      final existingRequest = await _getExistingRequest(
+        currentUserId,
+        otherUserId,
+      );
       if (existingRequest != null) {
         if (existingRequest.fromUserId == currentUserId) {
           return 'request_sent';
@@ -374,15 +407,20 @@ class ConnectionRequestService {
   /// Convert from Firestore data
   static Map<String, dynamic> _fromFirestoreData(Map<String, dynamic> data) {
     final Map<String, dynamic> normalizedData = Map<String, dynamic>.from(data);
-    
+
     // Convert Firestore Timestamps to ISO strings
     if (normalizedData['createdAt'] is Timestamp) {
-      normalizedData['createdAt'] = (normalizedData['createdAt'] as Timestamp).toDate().toIso8601String();
+      normalizedData['createdAt'] = (normalizedData['createdAt'] as Timestamp)
+          .toDate()
+          .toIso8601String();
     }
     if (normalizedData['respondedAt'] is Timestamp) {
-      normalizedData['respondedAt'] = (normalizedData['respondedAt'] as Timestamp).toDate().toIso8601String();
+      normalizedData['respondedAt'] =
+          (normalizedData['respondedAt'] as Timestamp)
+              .toDate()
+              .toIso8601String();
     }
-    
+
     return normalizedData;
   }
 
@@ -399,7 +437,7 @@ class ConnectionRequestService {
       for (final doc in snapshot.docs) {
         batch.update(doc.reference, {'status': 'expired'});
       }
-      
+
       await batch.commit();
       print('Cleaned up ${snapshot.docs.length} expired requests');
     } catch (e) {

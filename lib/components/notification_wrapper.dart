@@ -5,7 +5,7 @@ import 'package:realtime_chat_app/services/pending_instant_chat_watcher.dart';
 
 class NotificationWrapper extends StatefulWidget {
   final Widget child;
-  
+
   const NotificationWrapper({super.key, required this.child});
 
   @override
@@ -26,14 +26,14 @@ class _NotificationWrapperState extends State<NotificationWrapper> {
         // User is signed in, start listening for connection requests and instant messages
         print('🔔 User authenticated, starting PendingRequestWatcher');
         PendingRequestWatcher.startListening();
-        
+
         print('🔔 User authenticated, starting PendingInstantChatWatcher');
         PendingInstantChatWatcher.startListening();
       } else {
         // User is signed out, stop listening for connection requests and instant messages
         print('🔕 User signed out, stopping PendingRequestWatcher');
         PendingRequestWatcher.stopListening();
-        
+
         print('🔕 User signed out, stopping PendingInstantChatWatcher');
         PendingInstantChatWatcher.stopListening();
       }

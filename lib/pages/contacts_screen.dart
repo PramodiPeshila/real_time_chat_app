@@ -30,7 +30,9 @@ class _ContactsScreenState extends State<ContactsScreen> {
 
     try {
       final ownerId = FirebaseAuth.instance.currentUser?.uid;
-      final loadedContacts = await ContactService.fetchContacts(ownerId: ownerId);
+      final loadedContacts = await ContactService.fetchContacts(
+        ownerId: ownerId,
+      );
       setState(() {
         contacts = loadedContacts;
         isLoading = false;
@@ -39,7 +41,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
       setState(() {
         isLoading = false;
       });
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -73,148 +75,144 @@ class _ContactsScreenState extends State<ContactsScreen> {
                     MaterialPageRoute(
                       builder: (context) => const ConnectionRequestsPage(),
                     ),
-                  ).then((_) => _loadContacts()); // Refresh contacts when returning
-                    },
-                    tooltip: 'Connection Requests',
-                  ),
-                  // Badge temporarily disabled for debugging
-                ],
+                  ).then(
+                    (_) => _loadContacts(),
+                  ); // Refresh contacts when returning
+                },
+                tooltip: 'Connection Requests',
               ),
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: _loadContacts,
+              // Badge temporarily disabled for debugging
+            ],
           ),
+          IconButton(icon: const Icon(Icons.refresh), onPressed: _loadContacts),
         ],
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : contacts.isEmpty
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.contacts_outlined,
-                        size: 80,
-                        color: Colors.grey[400],
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.contacts_outlined,
+                    size: 80,
+                    color: Colors.grey[400],
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    'No contacts yet',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    'Scan QR codes to add contacts',
+                    style: TextStyle(fontSize: 16, color: Colors.grey[500]),
+                  ),
+                ],
+              ),
+            )
+          : RefreshIndicator(
+              onRefresh: () async => _loadContacts(),
+              child: ListView.builder(
+                padding: const EdgeInsets.all(8),
+                itemCount: contacts.length,
+                itemBuilder: (context, index) {
+                  final contact = contacts[index];
+                  return Card(
+                    margin: const EdgeInsets.symmetric(vertical: 4),
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
                       ),
-                      const SizedBox(height: 20),
-                      Text(
-                        'No contacts yet',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey[600],
+                      leading: CircleAvatar(
+                        radius: 25,
+                        backgroundColor: Colors.blue,
+                        child: Text(
+                          contact.displayName.isNotEmpty
+                              ? contact.displayName[0].toUpperCase()
+                              : 'U',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
                         ),
                       ),
-                      const SizedBox(height: 10),
-                      Text(
-                        'Scan QR codes to add contacts',
-                        style: TextStyle(
+                      title: Text(
+                        contact.displayName,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
                           fontSize: 16,
-                          color: Colors.grey[500],
                         ),
                       ),
-                    ],
-                  ),
-                )
-              : RefreshIndicator(
-                  onRefresh: () async => _loadContacts(),
-                  child: ListView.builder(
-                    padding: const EdgeInsets.all(8),
-                    itemCount: contacts.length,
-                    itemBuilder: (context, index) {
-                      final contact = contacts[index];
-                      return Card(
-                        margin: const EdgeInsets.symmetric(vertical: 4),
-                        elevation: 2,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: ListTile(
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
-                          ),
-                          leading: CircleAvatar(
-                            radius: 25,
-                            backgroundColor: Colors.blue,
-                            child: Text(
-                              contact.displayName.isNotEmpty
-                                  ? contact.displayName[0].toUpperCase()
-                                  : 'U',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                              ),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 4),
+                          Text(
+                            contact.email,
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontSize: 14,
                             ),
                           ),
-                          title: Text(
-                            contact.displayName,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16,
+                          const SizedBox(height: 2),
+                          Text(
+                            'Added ${_formatDate(contact.addedAt)}',
+                            style: TextStyle(
+                              color: Colors.grey[500],
+                              fontSize: 12,
                             ),
                           ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const SizedBox(height: 4),
-                              Text(
-                                contact.email,
-                                style: TextStyle(
-                                  color: Colors.grey[600],
-                                  fontSize: 14,
-                                ),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                'Added ${_formatDate(contact.addedAt)}',
-                                style: TextStyle(
-                                  color: Colors.grey[500],
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
+                        ],
+                      ),
+                      trailing: PopupMenuButton<String>(
+                        onSelected: (value) {
+                          if (value == 'chat') {
+                            _startChat(contact);
+                          } else if (value == 'delete') {
+                            _showDeleteDialog(contact);
+                          }
+                        },
+                        itemBuilder: (BuildContext context) => [
+                          const PopupMenuItem<String>(
+                            value: 'chat',
+                            child: Row(
+                              children: [
+                                Icon(Icons.chat, color: Colors.blue),
+                                SizedBox(width: 8),
+                                Text('Start Chat'),
+                              ],
+                            ),
                           ),
-                          trailing: PopupMenuButton<String>(
-                            onSelected: (value) {
-                              if (value == 'chat') {
-                                _startChat(contact);
-                              } else if (value == 'delete') {
-                                _showDeleteDialog(contact);
-                              }
-                            },
-                            itemBuilder: (BuildContext context) => [
-                              const PopupMenuItem<String>(
-                                value: 'chat',
-                                child: Row(
-                                  children: [
-                                    Icon(Icons.chat, color: Colors.blue),
-                                    SizedBox(width: 8),
-                                    Text('Start Chat'),
-                                  ],
-                                ),
-                              ),
-                              const PopupMenuItem<String>(
-                                value: 'delete',
-                                child: Row(
-                                  children: [
-                                    Icon(Icons.delete, color: Colors.red),
-                                    SizedBox(width: 8),
-                                    Text('Delete'),
-                                  ],
-                                ),
-                              ),
-                            ],
+                          const PopupMenuItem<String>(
+                            value: 'delete',
+                            child: Row(
+                              children: [
+                                Icon(Icons.delete, color: Colors.red),
+                                SizedBox(width: 8),
+                                Text('Delete'),
+                              ],
+                            ),
                           ),
-                          onTap: () => _startChat(contact),
-                        ),
-                      );
-                    },
-                  ),
-                ),
+                        ],
+                      ),
+                      onTap: () => _startChat(contact),
+                    ),
+                  );
+                },
+              ),
+            ),
       bottomNavigationBar: const Footer(),
     );
   }
@@ -278,8 +276,11 @@ class _ContactsScreenState extends State<ContactsScreen> {
   void _deleteContact(Contact contact) async {
     try {
       final ownerId = FirebaseAuth.instance.currentUser?.uid;
-      final success = await ContactService.deleteContact(contact.userId, ownerId: ownerId);
-      
+      final success = await ContactService.deleteContact(
+        contact.userId,
+        ownerId: ownerId,
+      );
+
       if (success) {
         setState(() {
           contacts.removeWhere((c) => c.userId == contact.userId);

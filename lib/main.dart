@@ -32,9 +32,9 @@ Future<void> main() async {
     PendingRequestWatcher.setNavigatorKey(navigatorKey);
     print('✅ PendingRequestWatcher initialized');
 
-  // Initialize the PendingInstantChatWatcher with navigator key
-  PendingInstantChatWatcher.setNavigatorKey(navigatorKey);
-  print('✅ PendingInstantChatWatcher initialized');
+    // Initialize the PendingInstantChatWatcher with navigator key
+    PendingInstantChatWatcher.setNavigatorKey(navigatorKey);
+    print('✅ PendingInstantChatWatcher initialized');
 
     // 🔹 Test Firestore connection (optional)
     // await FirebaseFirestore.instance.collection("test").add({
@@ -59,10 +59,7 @@ class MyApp extends StatelessWidget {
         navigatorKey: navigatorKey, // Add global navigator key
         debugShowCheckedModeBanner: false,
         title: 'LinkTalk',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-          useMaterial3: true,
-        ),
+        theme: ThemeData(primarySwatch: Colors.blue, useMaterial3: true),
         home: const WelcomeScreen(),
         routes: {
           '/welcome': (context) => const WelcomeScreen(),

@@ -69,8 +69,11 @@ class _InstantChatScreenState extends State<InstantChatScreen> {
   void initState() {
     super.initState();
     currentUserId = FirebaseAuth.instance.currentUser?.uid ?? '';
-    chatRoomId = InstantChatService.generateChatRoomId(currentUserId, widget.receiverId);
-    
+    chatRoomId = InstantChatService.generateChatRoomId(
+      currentUserId,
+      widget.receiverId,
+    );
+
     // Mark messages as read when opening chat
     WidgetsBinding.instance.addPostFrameCallback((_) {
       InstantChatService.markMessagesAsRead(chatRoomId, currentUserId);
@@ -133,7 +136,7 @@ class _InstantChatScreenState extends State<InstantChatScreen> {
 
   Widget _buildMessageBubble(Map<String, dynamic> messageData, bool isMe) {
     final timestamp = messageData['timestamp'] as Timestamp?;
-    final timeString = timestamp != null 
+    final timeString = timestamp != null
         ? _formatTime(timestamp.toDate())
         : 'Sending...';
 
@@ -203,184 +206,181 @@ class _InstantChatScreenState extends State<InstantChatScreen> {
     return WillPopScope(
       onWillPop: _confirmAndDeleteOnExit,
       child: Scaffold(
-      appBar: AppBar(
-        title: Text(widget.receiverName),
-        backgroundColor: Colors.blue,
-        foregroundColor: Colors.white,
-        elevation: 1,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.delete_forever),
-            tooltip: 'Delete chat for both',
-            onPressed: () async {
-              final confirm = await showDialog<bool>(
-                context: context,
-                builder: (ctx) => AlertDialog(
-                  title: const Text('Delete chat?'),
-                  content: const Text(
-                    'This will permanently delete all messages in this chat for both users. This action cannot be undone.',
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.of(ctx).pop(false),
-                      child: const Text('Cancel'),
+        appBar: AppBar(
+          title: Text(widget.receiverName),
+          backgroundColor: Colors.blue,
+          foregroundColor: Colors.white,
+          elevation: 1,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.delete_forever),
+              tooltip: 'Delete chat for both',
+              onPressed: () async {
+                final confirm = await showDialog<bool>(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: const Text('Delete chat?'),
+                    content: const Text(
+                      'This will permanently delete all messages in this chat for both users. This action cannot be undone.',
                     ),
-                    ElevatedButton(
-                      onPressed: () => Navigator.of(ctx).pop(true),
-                      child: const Text('Delete'),
-                    ),
-                  ],
-                ),
-              );
-
-              if (confirm == true) {
-                final ok = await InstantChatService.deleteChat(chatRoomId);
-                if (!mounted) return;
-                if (ok) {
-                  // Allow future popup notifications if this chat restarts
-                  await PendingInstantChatWatcher.clearSuppressionForChat(chatRoomId);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Chat deleted'),
-                      backgroundColor: Colors.green,
-                      duration: Duration(seconds: 2),
-                    ),
-                  );
-                  Navigator.of(context).pop();
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Failed to delete chat'),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                }
-              }
-            },
-          ),
-        ],
-  ),
-  body: Column(
-        children: [
-          // Messages list
-          Expanded(
-            child: StreamBuilder<QuerySnapshot>(
-              stream: InstantChatService.getMessages(chatRoomId),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-
-                if (snapshot.hasError) {
-                  return Center(
-                    child: Text('Error: ${snapshot.error}'),
-                  );
-                }
-
-                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return const Center(
-                    child: Text(
-                      'No messages yet. Start the conversation!',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey,
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(ctx).pop(false),
+                        child: const Text('Cancel'),
                       ),
-                    ),
-                  );
-                }
-
-                final messages = snapshot.data!.docs.toList()
-                  ..sort((a, b) {
-                    final ta = (a.data() as Map<String, dynamic>)['timestamp'] as Timestamp?;
-                    final tb = (b.data() as Map<String, dynamic>)['timestamp'] as Timestamp?;
-                    if (ta == null && tb == null) return 0;
-                    if (ta == null) return -1;
-                    if (tb == null) return 1;
-                    return ta.compareTo(tb);
-                  });
-                
-                // Auto scroll to bottom when new messages arrive
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  _scrollToBottom();
-                });
-
-                return ListView.builder(
-                  controller: _scrollController,
-                  itemCount: messages.length,
-                  itemBuilder: (context, index) {
-                    final messageData = messages[index].data() as Map<String, dynamic>;
-                    final isMe = messageData['senderId'] == currentUserId;
-                    
-                    return _buildMessageBubble(messageData, isMe);
-                  },
+                      ElevatedButton(
+                        onPressed: () => Navigator.of(ctx).pop(true),
+                        child: const Text('Delete'),
+                      ),
+                    ],
+                  ),
                 );
+
+                if (confirm == true) {
+                  final ok = await InstantChatService.deleteChat(chatRoomId);
+                  if (!mounted) return;
+                  if (ok) {
+                    // Allow future popup notifications if this chat restarts
+                    await PendingInstantChatWatcher.clearSuppressionForChat(
+                      chatRoomId,
+                    );
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Chat deleted'),
+                        backgroundColor: Colors.green,
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                    Navigator.of(context).pop();
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Failed to delete chat'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                }
               },
             ),
-          ),
-          
-          // Message input area
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.2),
-                  spreadRadius: 1,
-                  blurRadius: 3,
-                  offset: const Offset(0, -1),
-                ),
-              ],
+          ],
+        ),
+        body: Column(
+          children: [
+            // Messages list
+            Expanded(
+              child: StreamBuilder<QuerySnapshot>(
+                stream: InstantChatService.getMessages(chatRoomId),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  }
+
+                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return const Center(
+                      child: Text(
+                        'No messages yet. Start the conversation!',
+                        style: TextStyle(fontSize: 16, color: Colors.grey),
+                      ),
+                    );
+                  }
+
+                  final messages = snapshot.data!.docs.toList()
+                    ..sort((a, b) {
+                      final ta =
+                          (a.data() as Map<String, dynamic>)['timestamp']
+                              as Timestamp?;
+                      final tb =
+                          (b.data() as Map<String, dynamic>)['timestamp']
+                              as Timestamp?;
+                      if (ta == null && tb == null) return 0;
+                      if (ta == null) return -1;
+                      if (tb == null) return 1;
+                      return ta.compareTo(tb);
+                    });
+
+                  // Auto scroll to bottom when new messages arrive
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    _scrollToBottom();
+                  });
+
+                  return ListView.builder(
+                    controller: _scrollController,
+                    itemCount: messages.length,
+                    itemBuilder: (context, index) {
+                      final messageData =
+                          messages[index].data() as Map<String, dynamic>;
+                      final isMe = messageData['senderId'] == currentUserId;
+
+                      return _buildMessageBubble(messageData, isMe);
+                    },
+                  );
+                },
+              ),
             ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _messageController,
-                    decoration: InputDecoration(
-                      hintText: 'Type a message...',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(25),
-                        borderSide: BorderSide.none,
-                      ),
-                      filled: true,
-                      fillColor: Colors.grey[100],
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                    ),
-                    maxLines: null,
-                    onSubmitted: (_) => _sendMessage(),
+
+            // Message input area
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.2),
+                    spreadRadius: 1,
+                    blurRadius: 3,
+                    offset: const Offset(0, -1),
                   ),
-                ),
-                const SizedBox(width: 12),
-                FloatingActionButton(
-                  onPressed: _isLoading ? null : _sendMessage,
-                  backgroundColor: Colors.blue,
-                  mini: true,
-                  child: _isLoading
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            color: Colors.white,
-                            strokeWidth: 2,
-                          ),
-                        )
-                      : const Icon(
-                          Icons.send,
-                          color: Colors.white,
+                ],
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _messageController,
+                      decoration: InputDecoration(
+                        hintText: 'Type a message...',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25),
+                          borderSide: BorderSide.none,
                         ),
-                ),
-              ],
+                        filled: true,
+                        fillColor: Colors.grey[100],
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                      ),
+                      maxLines: null,
+                      onSubmitted: (_) => _sendMessage(),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  FloatingActionButton(
+                    onPressed: _isLoading ? null : _sendMessage,
+                    backgroundColor: Colors.blue,
+                    mini: true,
+                    child: _isLoading
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : const Icon(Icons.send, color: Colors.white),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ),
-  );
+    );
   }
 }
