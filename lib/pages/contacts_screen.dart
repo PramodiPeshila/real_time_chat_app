@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:realtime_chat_app/components/footer.dart';
 import 'package:realtime_chat_app/services/contact_service.dart';
 import 'package:realtime_chat_app/models/contact.dart';
-import 'package:realtime_chat_app/pages/chat_screen.dart';
+import 'package:realtime_chat_app/pages/instant_chat_screen.dart';
+import 'package:realtime_chat_app/pages/connection_requests_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class ContactsScreen extends StatefulWidget {
@@ -61,6 +62,24 @@ class _ContactsScreenState extends State<ContactsScreen> {
         backgroundColor: Colors.blue,
         iconTheme: const IconThemeData(color: Colors.white),
         actions: [
+          // Temporarily disable notification badge for debugging
+          Stack(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.inbox, color: Colors.white),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ConnectionRequestsPage(),
+                    ),
+                  ).then((_) => _loadContacts()); // Refresh contacts when returning
+                    },
+                    tooltip: 'Connection Requests',
+                  ),
+                  // Badge temporarily disabled for debugging
+                ],
+              ),
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: _loadContacts,
@@ -219,7 +238,11 @@ class _ContactsScreenState extends State<ContactsScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ChatScreen(userId: contact.displayName),
+        builder: (context) => InstantChatScreen(
+          receiverId: contact.userId,
+          receiverName: contact.displayName,
+          ephemeral: false,
+        ),
       ),
     );
   }
