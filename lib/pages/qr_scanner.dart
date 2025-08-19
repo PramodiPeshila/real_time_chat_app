@@ -91,11 +91,7 @@ class _QRScannerState extends State<QRScanner> {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 8),
-                  const Text(
-                    'Instant chat will open automatically',
-                    style: TextStyle(fontSize: 14, color: Colors.blue),
-                    textAlign: TextAlign.center,
-                  ),
+                  
                 ],
               ),
             ),
