@@ -1,10 +1,16 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart'; // Firestore
+// Firestore
 import 'package:realtime_chat_app/pages/authenticate.dart';
 import 'package:realtime_chat_app/pages/loggin_screen.dart';
 import 'package:realtime_chat_app/pages/welcome_screen.dart';
+import 'package:realtime_chat_app/components/notification_wrapper.dart';
+import 'package:realtime_chat_app/services/pending_request_watcher.dart';
+import 'package:realtime_chat_app/services/pending_instant_chat_watcher.dart';
 import 'firebase_options.dart';
+
+// Global navigator key for showing dialogs from anywhere
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,6 +27,14 @@ Future<void> main() async {
     print('Project ID: ${opts.projectId}');
     print('App ID: ${opts.appId}');
     print('API Key: ${opts.apiKey}');
+
+    // Initialize the PendingRequestWatcher with navigator key
+    PendingRequestWatcher.setNavigatorKey(navigatorKey);
+    print('✅ PendingRequestWatcher initialized');
+
+  // Initialize the PendingInstantChatWatcher with navigator key
+  PendingInstantChatWatcher.setNavigatorKey(navigatorKey);
+  print('✅ PendingInstantChatWatcher initialized');
 
     // 🔹 Test Firestore connection (optional)
     // await FirebaseFirestore.instance.collection("test").add({
@@ -40,19 +54,22 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'LinkTalk',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        useMaterial3: true,
+    return NotificationWrapper(
+      child: MaterialApp(
+        navigatorKey: navigatorKey, // Add global navigator key
+        debugShowCheckedModeBanner: false,
+        title: 'LinkTalk',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          useMaterial3: true,
+        ),
+        home: const WelcomeScreen(),
+        routes: {
+          '/welcome': (context) => const WelcomeScreen(),
+          '/login': (context) => const Logginscreen(),
+          '/auth': (context) => const Authenticate(),
+        },
       ),
-      home: const WelcomeScreen(),
-      routes: {
-        '/welcome': (context) => const WelcomeScreen(),
-        '/login': (context) => const Logginscreen(),
-        '/auth': (context) => const Authenticate(),
-      },
     );
   }
 }
