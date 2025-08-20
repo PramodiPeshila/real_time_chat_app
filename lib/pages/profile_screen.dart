@@ -133,13 +133,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile'),
-        backgroundColor: Colors.blue,
-        foregroundColor: Colors.white,
+        backgroundColor: Colors.white,
+        elevation: 4,
+        shadowColor: Colors.blue,
+        foregroundColor: Colors.black,
          actions: [
           // Edit / Save button
           if (!_isEditing)
             IconButton(
-              icon: const Icon(Icons.edit, color: Colors.white),
+              icon: const Icon(Icons.edit, color: Colors.black),
               tooltip: 'Edit profile',
               onPressed: () {
                 setState(() {
@@ -147,16 +149,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 });
               },
             ),
-          if (_isEditing)
-            IconButton(
-              icon: const Icon(Icons.save, color: Colors.white),
-              tooltip: 'Save profile',
-              onPressed: () async {
-                await _updateProfile();
-              },
-            ),
+          
+          
            IconButton(
-             icon: const Icon(Icons.logout, color: Colors.white),
+             icon: const Icon(Icons.logout, color: Colors.black),
              onPressed: () async {
                await logOut();
                if (mounted) {
@@ -194,7 +190,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
-                              color: Colors.blue,
+                              color: Colors.black,
                             ),
                           ),
                           const SizedBox(height: 20),
@@ -220,7 +216,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           // Edit/Save Buttons
                           if (_isEditing)
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+
                               children: [
                                 TextButton(
                                   onPressed: () {
@@ -230,13 +227,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       _loadUserData();
                                     });
                                   },
+                                  style: TextButton.styleFrom(
+                                    backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+                                    side: BorderSide(color: Colors.blue.shade300),
+                                    foregroundColor: Colors.black,
+                                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                                  ),
                                   child: const Text('Cancel'),
                                 ),
                                 const SizedBox(width: 12),
                                 ElevatedButton(
                                   onPressed: _updateProfile,
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.blue,
+                                    backgroundColor: const Color.fromARGB(255, 0, 94, 255),
                                     foregroundColor: Colors.white,
                                   ),
                                   child: const Text('Save Changes'),
@@ -263,7 +266,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
-                              color: Colors.blue,
+                              color: Colors.black,
                             ),
                           ),
                           const SizedBox(height: 16),
@@ -304,7 +307,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         children: [
           CircleAvatar(
             radius: 60,
-            backgroundColor: Colors.blue.shade100,
+            backgroundColor: const Color.fromARGB(255, 0, 94, 255),
             backgroundImage: _profileImageUrl != null 
                 ? NetworkImage(_profileImageUrl!) 
                 : null,
@@ -315,7 +318,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         : '?',
                     style: const TextStyle(
                       fontSize: 48,
-                      color: Colors.blue,
+                      color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
                   )
@@ -327,7 +330,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               right: 0,
               child: Container(
                 decoration: const BoxDecoration(
-                  color: Colors.blue,
+                  color: Color.fromARGB(255, 0, 94, 255),
                   shape: BoxShape.circle,
                 ),
                 child: IconButton(
@@ -355,7 +358,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       enabled: enabled,
       decoration: InputDecoration(
         labelText: label,
-        prefixIcon: Icon(icon, color: Colors.blue),
+        prefixIcon: Icon(icon, color: Colors.grey),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
         ),

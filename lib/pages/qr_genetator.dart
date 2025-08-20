@@ -48,10 +48,12 @@ class _QRGeneratorState extends State<QRGenerator> {
       appBar: AppBar(
         title: const Text(
           'My QR Code',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.blue,
-        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: Colors.white,
+        elevation: 4,
+        shadowColor: Colors.blue,
+        iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: Center(
         child: SingleChildScrollView(
@@ -61,18 +63,14 @@ class _QRGeneratorState extends State<QRGenerator> {
             children: [
               // User Avatar
               Container(
-                width: 120,
-                height: 120,
+                width: 100,
+                height: 100,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  gradient: LinearGradient(
-                    colors: [Colors.blue[400]!, Colors.blue[600]!],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
+                  color: const Color.fromARGB(255, 0, 94, 255),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.blue.withOpacity(0.3),
+                      color: const Color.fromARGB(255, 0, 94, 255).withOpacity(0.3),
                       blurRadius: 15,
                       spreadRadius: 2,
                       offset: const Offset(0, 5),
@@ -122,7 +120,7 @@ class _QRGeneratorState extends State<QRGenerator> {
                       QrImageView(
                         data: userQRData!,
                         version: QrVersions.auto,
-                        size: 250.0,
+                        size: 230.0,
                         gapless: false,
                         backgroundColor: Colors.white,
                         dataModuleStyle: const QrDataModuleStyle(
@@ -130,8 +128,8 @@ class _QRGeneratorState extends State<QRGenerator> {
                           color: Colors.black,
                         ),
                         eyeStyle: const QrEyeStyle(
-                          eyeShape: QrEyeShape.square,
-                          color: Colors.blue,
+                          eyeShape: QrEyeShape.circle,
+                          color: Color.fromARGB(255, 0, 94, 255),
                         ),
                       )
                     else
@@ -159,25 +157,7 @@ class _QRGeneratorState extends State<QRGenerator> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   // Share Button
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      // Implement share functionality
-                      _shareQRCode();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 12,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(25),
-                      ),
-                    ),
-                    icon: const Icon(Icons.share),
-                    label: const Text('Share'),
-                  ),
+                  
 
                   // Scan Button
                   ElevatedButton.icon(
@@ -190,18 +170,19 @@ class _QRGeneratorState extends State<QRGenerator> {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
+                      backgroundColor: const Color.fromARGB(255, 0, 94, 255),
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
+                        horizontal: 30,
                         vertical: 12,
                       ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(25),
                       ),
+                      
                     ),
                     icon: const Icon(Icons.qr_code_scanner),
-                    label: const Text('Scan'),
+                    label: const Text('Scan' , style: TextStyle(fontWeight: FontWeight.w700 , fontSize: 16)),
                   ),
                 ],
               ),
@@ -213,23 +194,5 @@ class _QRGeneratorState extends State<QRGenerator> {
     );
   }
 
-  void _shareQRCode() {
-    // Implement share functionality here
-    // You can use the 'share_plus' package for sharing
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Share QR Code'),
-        content: const Text(
-          'QR code sharing feature will be implemented here.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
-  }
+  
 }

@@ -20,82 +20,109 @@ class _LogginscreenState extends State<Logginscreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
-      body: isLoading ?
-      Center(
-        child: SizedBox(
-          width: size.width / 20,
-          height: size.width / 20,
-          child: const CircularProgressIndicator(),
+      body: Container(
+        width: size.width,
+        height: size.height,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color.fromARGB(255, 255, 255, 255), Color(0xFF42A5F5)],
+          ),
         ),
-      ) :
-      SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(height: size.height / 20),
-            Container(
-              alignment: Alignment.centerLeft,
-              width: size.width / 1.2,
-              child: IconButton(
-                icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
-                onPressed: () => Navigator.pop(context),
-              ),
-            ),
-            SizedBox(height: size.height / 50),
-            SizedBox(
-              width: size.width / 1.3,
-              child: const Text(
-                "Welcome",
-                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-              ),
-            ),
-            SizedBox(
-              width: size.width / 1.3,
-              child: const Text(
-                "Sign in to continue",
-                style: TextStyle(
-                  color: Color.fromARGB(255, 141, 141, 141),
-                  fontSize: 25,
-                  fontWeight: FontWeight.w500,
+        child: isLoading
+            ? Center(
+                child: SizedBox(
+                  width: size.width / 20,
+                  height: size.width / 20,
+                  child: const CircularProgressIndicator(),
                 ),
-              ),
-            ),
-            SizedBox(height: size.height / 20),
-            Container(
-              width: size.width,
-              alignment: Alignment.center,
-              child: _buildField(size, "Email", Icons.email, _email),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 18.0),
-              child: Container(
-                width: size.width,
-                alignment: Alignment.center,
-                child: _buildField(size, "Password", Icons.lock, _password),
-              ),
-            ),
-            SizedBox(height: size.height / 10),
+              )
+            : SingleChildScrollView(
+                child: Column(
+                  children: [
+                    SizedBox(height: size.height / 10),
+                    SizedBox(height: size.height / 10),
+                    Container(
+                      child: Image.asset(
+                        "lib/assets/icon.png",
+                        width: 150,
+                        height: 150,
+                      ),
+                    ),
+                    SizedBox(
+                      width: size.width / 1.3,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Text(
+                            "Sign in to LinkTalk",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 25,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
 
-            _buildLoginButton(size),
-            SizedBox(height: size.height / 40),
-
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: GestureDetector(
-                onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const CreateAccount())
-                ),
-                child: const Text(
-                  "Create Account",
-                  style: TextStyle(
-                    color: Colors.blue,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
-                  ),
+                    SizedBox(
+                      width: size.width / 1.3,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            "first time here?",
+                            style: TextStyle(
+                              color: Colors.blueGrey,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () => Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => const CreateAccount(),
+                              ),
+                            ),
+                            child: const Text(
+                              "  Sign Up",
+                              style: TextStyle(
+                                color: Colors.blue,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: size.height / 30),
+                    Container(
+                      width: size.width,
+                      alignment: Alignment.center,
+                      child: _buildField(size, "Email", Icons.email, _email),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 18.0),
+                      child: Container(
+                        width: size.width,
+                        alignment: Alignment.center,
+                        child: _buildField(
+                          size,
+                          "Password",
+                          Icons.lock,
+                          _password,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: size.height / 30),
+                    _buildLoginButton(size),
+                    
+                  ],
                 ),
               ),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -110,7 +137,7 @@ class _LogginscreenState extends State<Logginscreen> {
 
           try {
             final user = await logIn(_email.text, _password.text);
-            
+
             setState(() {
               isLoading = false;
             });
@@ -119,7 +146,10 @@ class _LogginscreenState extends State<Logginscreen> {
               print("Login Successfully");
               _showSuccessMessage("Login successful! Welcome ");
               // Navigate to home screen
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HomeScreen()));
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const HomeScreen()),
+              );
             } else {
               print("Login Failed");
               _showErrorMessage("Login failed. Please check your credentials.");
@@ -140,14 +170,14 @@ class _LogginscreenState extends State<Logginscreen> {
         height: size.height / 14,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          color: Colors.blue,
+          color: const Color.fromARGB(255, 0, 94, 255),
         ),
         alignment: Alignment.center,
         child: const Text(
           "Login",
           style: TextStyle(
             color: Colors.white,
-            fontSize: 22,
+            fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -155,7 +185,12 @@ class _LogginscreenState extends State<Logginscreen> {
     );
   }
 
-  Widget _buildField(Size size, String hintText, IconData icon, TextEditingController cont) {
+  Widget _buildField(
+    Size size,
+    String hintText,
+    IconData icon,
+    TextEditingController cont,
+  ) {
     return SizedBox(
       width: size.width / 1.3,
       height: size.height / 15,
@@ -166,9 +201,7 @@ class _LogginscreenState extends State<Logginscreen> {
           prefixIcon: Icon(icon),
           hintText: hintText,
           hintStyle: const TextStyle(color: Colors.grey),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         ),
       ),
     );
@@ -177,10 +210,7 @@ class _LogginscreenState extends State<Logginscreen> {
   void _showErrorMessage(String message) {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(message),
-          backgroundColor: Colors.red,
-        ),
+        SnackBar(content: Text(message), backgroundColor: Colors.red),
       );
     }
   }
@@ -188,10 +218,7 @@ class _LogginscreenState extends State<Logginscreen> {
   void _showSuccessMessage(String message) {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(message),
-          backgroundColor: Colors.green,
-        ),
+        SnackBar(content: Text(message), backgroundColor: Colors.green),
       );
     }
   }
