@@ -44,10 +44,20 @@ class _InstantChatScreenState extends State<InstantChatScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
+            style: TextButton.styleFrom(
+              backgroundColor: Colors.white,
+              foregroundColor: Colors.black,
+              side: const BorderSide(color: Colors.blue),
+            ),
             child: const Text('Cancel'),
           ),
           ElevatedButton(
             onPressed: () => Navigator.of(ctx).pop(true),
+            style: TextButton.styleFrom(
+              backgroundColor: Colors.white,
+              foregroundColor: Colors.red,
+              side: const BorderSide(color: Colors.red),
+            ),
             child: const Text('Delete & Close'),
           ),
         ],
@@ -149,8 +159,8 @@ class _InstantChatScreenState extends State<InstantChatScreen> {
           maxWidth: MediaQuery.of(context).size.width * 0.75,
         ),
         decoration: BoxDecoration(
-          color: isMe ? Colors.blue : Colors.grey[300],
-          borderRadius: BorderRadius.circular(18),
+          color: isMe ? const Color.fromARGB(255, 0, 94, 255) : Colors.white,
+          borderRadius: BorderRadius.circular(16),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -208,9 +218,11 @@ class _InstantChatScreenState extends State<InstantChatScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(widget.receiverName),
-          backgroundColor: Colors.blue,
-          foregroundColor: Colors.white,
-          elevation: 1,
+          backgroundColor: Colors.white,
+          elevation: 4,
+          shadowColor: Colors.blue,
+          foregroundColor: Colors.black,
+
           actions: [
             IconButton(
               icon: const Icon(Icons.delete_forever),
@@ -226,10 +238,20 @@ class _InstantChatScreenState extends State<InstantChatScreen> {
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.of(ctx).pop(false),
+                        style: TextButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: Colors.black,
+                          side: const BorderSide(color: Colors.blue),
+                        ),
                         child: const Text('Cancel'),
                       ),
                       ElevatedButton(
                         onPressed: () => Navigator.of(ctx).pop(true),
+                        style: TextButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: Colors.red,
+                          side: const BorderSide(color: Colors.red),
+                        ),
                         child: const Text('Delete'),
                       ),
                     ],
@@ -360,20 +382,31 @@ class _InstantChatScreenState extends State<InstantChatScreen> {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  FloatingActionButton(
-                    onPressed: _isLoading ? null : _sendMessage,
-                    backgroundColor: Colors.blue,
-                    mini: true,
-                    child: _isLoading
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2,
-                            ),
-                          )
-                        : const Icon(Icons.send, color: Colors.white),
+                  Container(
+                    width: 55,
+                    height: 55,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    child: FloatingActionButton(
+                      onPressed: _isLoading ? null : _sendMessage,
+                      backgroundColor: const Color.fromARGB(255, 0, 94, 255),
+                      elevation: 2,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      mini: true,
+                      child: _isLoading
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : const Icon(Icons.send, color: Colors.white),
+                    ),
                   ),
                 ],
               ),
