@@ -115,10 +115,33 @@ class _HomeScreenState extends State<HomeScreen> {
                             return btMillis.compareTo(atMillis);
                           });
                           if (docs.isEmpty) {
-                            return const Center(
-                              child: Text(
-                                'Welcome to LinkTalk',
-                                style: TextStyle(color: Colors.grey),
+                            return Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Icon(
+                                    Icons.chat,
+                                    size: 80,
+                                    color: Colors.grey,
+                                  ),
+                                  const SizedBox(height: 20),
+                                  Text(
+                                    'No Chat yet',
+                                    style: TextStyle(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  const Text(
+                                    'Welcome to LinkTalk',
+                                    style: TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                ],
                               ),
                             );
                           }
@@ -163,7 +186,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
-                                   
+
                                     borderRadius: BorderRadius.circular(8),
                                     boxShadow: [
                                       BoxShadow(
@@ -181,7 +204,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                           nameSnap.data ?? 'Unknown';
                                       return ListTile(
                                         leading: CircleAvatar(
-                                          backgroundColor: const Color.fromARGB(255, 0, 94, 255),
+                                          backgroundColor: const Color.fromARGB(
+                                            255,
+                                            0,
+                                            94,
+                                            255,
+                                          ),
                                           child: Text(
                                             otherName.isNotEmpty
                                                 ? otherName[0].toUpperCase()
