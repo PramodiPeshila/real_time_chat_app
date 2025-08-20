@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:realtime_chat_app/components/footer.dart';
 import 'package:realtime_chat_app/services/instant_chat_service.dart';
 import 'package:realtime_chat_app/pages/instant_chat_screen.dart';
+import 'package:realtime_chat_app/pages/contacts_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -56,120 +57,198 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'LinkTalk',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        automaticallyImplyLeading: false,
+        title: Container(
+          child: Row(
+            children: [
+              Image.asset("lib/assets/icon.png", width: 50, height: 50),
+              const SizedBox(width: 8),
+              const Text(
+                'LinkTalk',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
         ),
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.white,
+        elevation: 4,
+        shadowColor: Colors.blue,
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: _currentUserId.isEmpty
-                ? const Center(child: Text('Please sign in to view chats'))
-                : StreamBuilder<QuerySnapshot>(
-                    stream: InstantChatService.getChatRooms(_currentUserId),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                      if (snapshot.hasError) {
-                        return Center(child: Text('Error: ${snapshot.error}'));
-                      }
-                      final docs = snapshot.data?.docs.toList() ?? [];
-                      // Sort by lastMessageTime desc client-side
-                      docs.sort((a, b) {
-                        final ad = (a.data() as Map<String, dynamic>);
-                        final bd = (b.data() as Map<String, dynamic>);
-                        final at = ad['lastMessageTime'] as Timestamp?;
-                        final bt = bd['lastMessageTime'] as Timestamp?;
-                        final atMillis = at?.millisecondsSinceEpoch ?? 0;
-                        final btMillis = bt?.millisecondsSinceEpoch ?? 0;
-                        return btMillis.compareTo(atMillis);
-                      });
-                      if (docs.isEmpty) {
-                        return const Center(
-                          child: Text(
-                            'No chats yet. Start chatting from your contacts!',
-                            style: TextStyle(color: Colors.grey),
-                          ),
-                        );
-                      }
-                      return ListView.builder(
-                        itemCount: docs.length,
-                        itemBuilder: (context, index) {
-                          final data =
-                              docs[index].data() as Map<String, dynamic>;
-                          final List participants =
-                              (data['participants'] as List?) ?? [];
-                          final otherId =
-                              participants.firstWhere(
-                                    (p) => p != _currentUserId,
-                                    orElse: () => '',
-                                  )
-                                  as String;
-                          final lastMsg =
-                              (data['lastMessage'] as String?) ?? '';
-                          final lastTime =
-                              data['lastMessageTime'] as Timestamp?;
-                          if (otherId.isEmpty) {
-                            return const SizedBox.shrink();
+      body: Container(
+        child: Column(
+          children: [
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.all(2),
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(255, 245, 247, 250),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: _currentUserId.isEmpty
+                    ? const Center(child: Text('Please sign in to view chats'))
+                    : StreamBuilder<QuerySnapshot>(
+                        stream: InstantChatService.getChatRooms(_currentUserId),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
                           }
+                          if (snapshot.hasError) {
+                            return Center(
+                              child: Text('Error: ${snapshot.error}'),
+                            );
+                          }
+                          final docs = snapshot.data?.docs.toList() ?? [];
+                          // Sort by lastMessageTime desc client-side
+                          docs.sort((a, b) {
+                            final ad = (a.data() as Map<String, dynamic>);
+                            final bd = (b.data() as Map<String, dynamic>);
+                            final at = ad['lastMessageTime'] as Timestamp?;
+                            final bt = bd['lastMessageTime'] as Timestamp?;
+                            final atMillis = at?.millisecondsSinceEpoch ?? 0;
+                            final btMillis = bt?.millisecondsSinceEpoch ?? 0;
+                            return btMillis.compareTo(atMillis);
+                          });
+                          if (docs.isEmpty) {
+                            return const Center(
+                              child: Text(
+                                'Welcome to LinkTalk',
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                            );
+                          }
+                          return Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(8),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.2),
+                                  spreadRadius: 2,
+                                  blurRadius: 5,
+                                  offset: const Offset(0, 3),
+                                ),
+                              ],
+                            ),
+                            child: ListView.builder(
+                              itemCount: docs.length,
+                              itemBuilder: (context, index) {
+                                final data =
+                                    docs[index].data() as Map<String, dynamic>;
+                                final List participants =
+                                    (data['participants'] as List?) ?? [];
+                                final otherId =
+                                    participants.firstWhere(
+                                          (p) => p != _currentUserId,
+                                          orElse: () => '',
+                                        )
+                                        as String;
+                                final lastMsg =
+                                    (data['lastMessage'] as String?) ?? '';
+                                final lastTime =
+                                    data['lastMessageTime'] as Timestamp?;
+                                if (otherId.isEmpty) {
+                                  return const SizedBox.shrink();
+                                }
 
-                          return FutureBuilder<String>(
-                            future: _getUserName(otherId),
-                            builder: (context, nameSnap) {
-                              final otherName = nameSnap.data ?? 'Unknown';
-                              return ListTile(
-                                leading: CircleAvatar(
-                                  backgroundColor: Colors.blue,
-                                  child: Text(
-                                    otherName.isNotEmpty
-                                        ? otherName[0].toUpperCase()
-                                        : 'U',
-                                    style: const TextStyle(color: Colors.white),
+                                return Container(
+                                  margin: const EdgeInsets.symmetric(
+                                    vertical: 4,
                                   ),
-                                ),
-                                title: Text(
-                                  otherName,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                subtitle: Text(
-                                  lastMsg,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                trailing: Text(
-                                  _formatTime(lastTime),
-                                  style: const TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => InstantChatScreen(
-                                        receiverId: otherId,
-                                        receiverName: otherName,
-                                        ephemeral: false,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                   
+                                    borderRadius: BorderRadius.circular(8),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey.withOpacity(0.2),
+                                        spreadRadius: 2,
+                                        blurRadius: 5,
+                                        offset: const Offset(0, 3),
                                       ),
-                                    ),
-                                  );
-                                },
-                              );
-                            },
+                                    ],
+                                  ),
+                                  child: FutureBuilder<String>(
+                                    future: _getUserName(otherId),
+                                    builder: (context, nameSnap) {
+                                      final otherName =
+                                          nameSnap.data ?? 'Unknown';
+                                      return ListTile(
+                                        leading: CircleAvatar(
+                                          backgroundColor: const Color.fromARGB(255, 0, 94, 255),
+                                          child: Text(
+                                            otherName.isNotEmpty
+                                                ? otherName[0].toUpperCase()
+                                                : 'U',
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                        ),
+                                        title: Text(
+                                          otherName,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                        subtitle: Text(
+                                          lastMsg,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        trailing: Text(
+                                          _formatTime(lastTime),
+                                          style: const TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (_) => InstantChatScreen(
+                                                receiverId: otherId,
+                                                receiverName: otherName,
+                                                ephemeral: false,
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    },
+                                  ),
+                                );
+                              },
+                            ),
                           );
                         },
-                      );
-                    },
-                  ),
-          ),
-          const Footer(),
-        ],
+                      ),
+              ),
+            ),
+            const Footer(),
+          ],
+        ),
+      ),
+      floatingActionButton: Container(
+        margin: const EdgeInsets.only(bottom: 100),
+        child: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const ContactsScreen()),
+            );
+          },
+          backgroundColor: const Color.fromARGB(255, 0, 94, 255),
+          child: const Icon(Icons.contacts_rounded, color: Colors.white),
+        ),
       ),
     );
   }
