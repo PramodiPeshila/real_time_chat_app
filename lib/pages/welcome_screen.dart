@@ -17,26 +17,14 @@ class WelcomeScreen extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFF1976D2), Color(0xFF42A5F5)],
+            colors: [Color.fromARGB(255, 255, 255, 255), Color(0xFF42A5F5)],
           ),
         ),
         child: SafeArea(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // App Logo/Icon
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(100),
-                ),
-                child: const Icon(
-                  Icons.chat_bubble_outline,
-                  size: 80,
-                  color: Colors.white,
-                ),
-              ),
+              
 
               const SizedBox(height: 40),
 
@@ -44,34 +32,29 @@ class WelcomeScreen extends StatelessWidget {
               const Text(
                 "Welcome to",
                 style: TextStyle(
-                  fontSize: 24,
-                  color: Colors.white70,
-                  fontWeight: FontWeight.w300,
+                  fontSize: 26,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
 
               const SizedBox(height: 10),
 
-              const Text(
-                "LinkTalk",
-                style: TextStyle(
-                  fontSize: 32,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
+              // App Logo/Icon
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  
+                  borderRadius: BorderRadius.circular(100),
+                ),
+                child: Image.asset(
+                  "lib/assets/logo.png",
+                  width: 180,
+                  height: 180,
                 ),
               ),
 
-              const SizedBox(height: 10),
-
-              const Text(
-                "Connect with friends instantly",
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.white70,
-                  fontWeight: FontWeight.w300,
-                ),
-              ),
-
+              
               const SizedBox(height: 80),
 
               // Sign In Button

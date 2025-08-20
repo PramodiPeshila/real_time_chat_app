@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:realtime_chat_app/models/contact.dart';
 import 'package:realtime_chat_app/services/contact_service.dart';
-import 'package:realtime_chat_app/pages/chat_screen.dart';
+import 'package:realtime_chat_app/services/connection_request_service.dart';
+import 'package:realtime_chat_app/pages/instant_chat_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class InstantChatView extends StatefulWidget {
@@ -28,9 +28,11 @@ class _InstantChatViewState extends State<InstantChatView> {
   void _parseUserData() {
     try {
       // Remove the curly braces and parse as a map-like string
-      String cleanData = widget.scannedData.replaceAll('{', '').replaceAll('}', '');
+      String cleanData = widget.scannedData
+          .replaceAll('{', '')
+          .replaceAll('}', '');
       Map<String, dynamic> parsedData = {};
-      
+
       List<String> pairs = cleanData.split(', ');
       for (String pair in pairs) {
         List<String> keyValue = pair.split(': ');
@@ -40,7 +42,7 @@ class _InstantChatViewState extends State<InstantChatView> {
           parsedData[key] = value;
         }
       }
-      
+
       setState(() {
         userData = parsedData;
       });
@@ -61,7 +63,10 @@ class _InstantChatViewState extends State<InstantChatView> {
     if (userData != null) {
       final ownerId = FirebaseAuth.instance.currentUser?.uid;
       final isContact = (ownerId != null && ownerId.isNotEmpty)
-          ? await ContactService.isContactRemote(ownerId, userData!['userId'] ?? '')
+          ? await ContactService.isContactRemote(
+              ownerId,
+              userData!['userId'] ?? '',
+            )
           : await ContactService.isContact(userData!['userId'] ?? '');
       setState(() {
         isAddedToContacts = isContact;
@@ -75,10 +80,12 @@ class _InstantChatViewState extends State<InstantChatView> {
       appBar: AppBar(
         title: const Text(
           'New Contact',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.blue,
-        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: Colors.white,
+        elevation: 4,
+        shadowColor: Colors.blue,
+        iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: userData == null
           ? const Center(child: CircularProgressIndicator())
@@ -94,11 +101,7 @@ class _InstantChatViewState extends State<InstantChatView> {
                     height: 120,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      gradient: LinearGradient(
-                        colors: [Colors.blue[400]!, Colors.blue[600]!],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
+                      color: const Color.fromARGB(255, 0, 94, 255),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.blue.withOpacity(0.3),
@@ -108,7 +111,11 @@ class _InstantChatViewState extends State<InstantChatView> {
                         ),
                       ],
                     ),
-                    child: const Icon(Icons.person, size: 60, color: Colors.white),
+                    child: const Icon(
+                      Icons.person,
+                      size: 60,
+                      color: Colors.white,
+                    ),
                   ),
 
                   const SizedBox(height: 20),
@@ -136,29 +143,26 @@ class _InstantChatViewState extends State<InstantChatView> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Icon(Icons.email, size: 16, color: Colors.grey),
+                              const Icon(
+                                Icons.email,
+                                size: 16,
+                                color: Colors.grey,
+                              ),
                               const SizedBox(width: 5),
                               Flexible(
                                 child: Text(
                                   userData!['email'] ?? 'No email available',
-                                  style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.grey[600],
+                                  ),
                                   textAlign: TextAlign.center,
                                 ),
                               ),
                             ],
                           ),
                           const SizedBox(height: 10),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(Icons.person, size: 16, color: Colors.grey),
-                              const SizedBox(width: 5),
-                              Text(
-                                'ID: ${userData!['userId']?.toString().substring(0, 8) ?? 'Unknown'}...',
-                                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-                              ),
-                            ],
-                          ),
+                          
                         ],
                       ),
                     ),
@@ -178,7 +182,11 @@ class _InstantChatViewState extends State<InstantChatView> {
                       child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.check_circle, color: Colors.green, size: 20),
+                          Icon(
+                            Icons.check_circle,
+                            color: Colors.green,
+                            size: 20,
+                          ),
                           SizedBox(width: 8),
                           Text(
                             'Already in your contacts',
@@ -201,7 +209,7 @@ class _InstantChatViewState extends State<InstantChatView> {
                         child: ElevatedButton.icon(
                           onPressed: () => _startChat(),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue,
+                            backgroundColor: const Color.fromARGB(255, 0, 94, 255),
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(vertical: 15),
                             shape: RoundedRectangleBorder(
@@ -212,7 +220,10 @@ class _InstantChatViewState extends State<InstantChatView> {
                           icon: const Icon(Icons.chat),
                           label: const Text(
                             'Start Chat',
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                       ),
@@ -223,7 +234,9 @@ class _InstantChatViewState extends State<InstantChatView> {
                       if (!isAddedToContacts)
                         Expanded(
                           child: ElevatedButton.icon(
-                            onPressed: isLoadingContact ? null : () => _addToContacts(),
+                            onPressed: isLoadingContact
+                                ? null
+                                : () => _addToContacts(),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.green,
                               foregroundColor: Colors.white,
@@ -233,7 +246,7 @@ class _InstantChatViewState extends State<InstantChatView> {
                               ),
                               elevation: 5,
                             ),
-                            icon: isLoadingContact 
+                            icon: isLoadingContact
                                 ? const SizedBox(
                                     width: 16,
                                     height: 16,
@@ -244,15 +257,20 @@ class _InstantChatViewState extends State<InstantChatView> {
                                   )
                                 : const Icon(Icons.person_add),
                             label: Text(
-                              isLoadingContact ? 'Adding...' : 'Add Contact',
-                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                              isLoadingContact ? 'Sending...' : 'Add Contact',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
                         )
                       else
                         Expanded(
                           child: ElevatedButton.icon(
-                            onPressed: isLoadingContact ? null : () => _removeFromContacts(),
+                            onPressed: isLoadingContact
+                                ? null
+                                : () => _removeFromContacts(),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.red,
                               foregroundColor: Colors.white,
@@ -262,19 +280,26 @@ class _InstantChatViewState extends State<InstantChatView> {
                               ),
                               elevation: 5,
                             ),
-                            icon: isLoadingContact 
+                            icon: isLoadingContact
                                 ? const SizedBox(
                                     width: 16,
                                     height: 16,
                                     child: CircularProgressIndicator(
-                                      strokeWidth: 2,
+                                      
+                                      strokeWidth: 3,
                                       color: Colors.white,
                                     ),
                                   )
                                 : const Icon(Icons.person_remove),
                             label: Text(
-                              isLoadingContact ? 'Removing...' : 'Remove Contact',
-                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                              isLoadingContact
+                                  ? 'Removing...'
+                                  : 'Remove Contact',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                
+                              ),
                             ),
                           ),
                         ),
@@ -297,7 +322,7 @@ class _InstantChatViewState extends State<InstantChatView> {
                           const SizedBox(width: 10),
                           Expanded(
                             child: Text(
-                              'Start chatting instantly or add this person to your contacts for future conversations.',
+                              'Start chatting instantly or send a contact request. They will need to confirm before you both become contacts.',
                               style: TextStyle(
                                 fontSize: 14,
                                 color: Colors.grey[600],
@@ -315,10 +340,35 @@ class _InstantChatViewState extends State<InstantChatView> {
   }
 
   void _startChat() {
-    Navigator.pushReplacement(
+    if (userData == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Unable to start chat. User data not available.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    final receiverId = userData!['userId'] ?? '';
+    if (receiverId.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Unable to start chat. Missing receiver ID.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ChatScreen(userId: userData!['displayName'] ?? 'Unknown User'),
+        builder: (context) => InstantChatScreen(
+          receiverId: receiverId,
+          receiverName: userData!['displayName'] ?? 'Unknown User',
+          ephemeral: true,
+        ),
       ),
     );
   }
@@ -326,47 +376,77 @@ class _InstantChatViewState extends State<InstantChatView> {
   void _addToContacts() async {
     if (userData == null) return;
 
+    // Show confirmation dialog for User A
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Add Contact'),
+        content: Text(
+          'Do you want to send a contact request to ${userData!['displayName']}? They will need to confirm before you both become contacts.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+            style: TextButton.styleFrom(
+              backgroundColor: Colors.white,
+              foregroundColor: Colors.black,
+              side: BorderSide(color: Colors.red),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Send Request'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
+              foregroundColor: Colors.black,
+              side: BorderSide(color: Colors.blue),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm != true) return;
+
     setState(() {
       isLoadingContact = true;
     });
 
     try {
-      final contact = Contact(
-        userId: userData!['userId'] ?? '',
-        email: userData!['email'] ?? '',
-        displayName: userData!['displayName'] ?? 'Unknown User',
-        addedAt: DateTime.now(),
+      // Send connection request to User B
+      final success = await ConnectionRequestService.sendConnectionRequest(
+        toUserId: userData!['userId'] ?? '',
+        toUserName: userData!['displayName'] ?? 'Unknown User',
+        toUserEmail: userData!['email'] ?? '',
+        message: 'Hi! I would like to add you as a contact.',
       );
 
-      final ownerId = FirebaseAuth.instance.currentUser?.uid;
-      final success = await ContactService.saveContact(contact, ownerId: ownerId);
+      setState(() {
+        isLoadingContact = false;
+      });
 
       if (success) {
-        setState(() {
-          isAddedToContacts = true;
-          isLoadingContact = false;
-        });
-
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('${contact.displayName} added to contacts!'),
-              backgroundColor: Colors.green,
-              duration: const Duration(seconds: 2),
+              content: Text(
+                'Contact request sent to ${userData!['displayName']}! Waiting for their confirmation.',
+              ),
+              backgroundColor: Colors.blue,
+              duration: const Duration(seconds: 3),
             ),
           );
         }
       } else {
-        setState(() {
-          isLoadingContact = false;
-        });
-
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Contact already exists or failed to add'),
+              content: Text(
+                'Failed to send contact request. You may already be contacts or have a pending request.',
+              ),
               backgroundColor: Colors.orange,
-              duration: Duration(seconds: 2),
+              duration: Duration(seconds: 3),
             ),
           );
         }
@@ -379,7 +459,7 @@ class _InstantChatViewState extends State<InstantChatView> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error adding contact: $e'),
+            content: Text('Error sending contact request: $e'),
             backgroundColor: Colors.red,
             duration: const Duration(seconds: 2),
           ),
@@ -397,7 +477,10 @@ class _InstantChatViewState extends State<InstantChatView> {
 
     try {
       final ownerId = FirebaseAuth.instance.currentUser?.uid;
-      final success = await ContactService.deleteContact(userData!['userId'] ?? '', ownerId: ownerId);
+      final success = await ContactService.deleteContact(
+        userData!['userId'] ?? '',
+        ownerId: ownerId,
+      );
 
       if (success) {
         setState(() {

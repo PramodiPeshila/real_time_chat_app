@@ -33,10 +33,12 @@ class _QRScannerState extends State<QRScanner> {
       appBar: AppBar(
         title: const Text(
           'Scan QR Code',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.blue,
-        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: Colors.white,
+        elevation: 4,
+        shadowColor: Colors.blue,
+        iconTheme: const IconThemeData(color: Colors.black),
         actions: [
           IconButton(
             icon: Icon(flashOn ? Icons.flash_on : Icons.flash_off),
@@ -91,11 +93,7 @@ class _QRScannerState extends State<QRScanner> {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 8),
-                  const Text(
-                    'Instant chat will open automatically',
-                    style: TextStyle(fontSize: 14, color: Colors.blue),
-                    textAlign: TextAlign.center,
-                  ),
+                  
                 ],
               ),
             ),
