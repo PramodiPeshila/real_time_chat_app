@@ -239,13 +239,22 @@ class _ContactsScreenState extends State<ContactsScreen> {
             TextButton(
               onPressed: () => Navigator.pop(context),
               child: const Text('Cancel'),
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: Colors.black,
+                side: BorderSide(color: Colors.blue),
+                ),
             ),
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
                 _deleteContact(contact);
               },
-              style: TextButton.styleFrom(foregroundColor: Colors.red),
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: Colors.black,
+                side: BorderSide(color: Colors.red),
+                ),
               child: const Text('Delete'),
             ),
           ],

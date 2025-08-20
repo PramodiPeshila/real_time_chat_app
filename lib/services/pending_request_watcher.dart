@@ -22,7 +22,7 @@ class PendingRequestWatcher {
   static void startListening() {
     final currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser == null) {
-      print('No authenticated user for request watching');
+      print('❌ No authenticated user for request watching');
       return;
     }
 
@@ -30,10 +30,13 @@ class PendingRequestWatcher {
       '🔍 Starting to watch for connection requests for user: ${currentUser.uid}',
     );
 
-    // Listen for pending connection requests (for User A - the accepter)
+    // Stop any existing subscriptions
+    stopListening();
+
+    // Listen for pending connection requests (ONLY for User B - the recipient)
     _subscription = FirebaseFirestore.instance
         .collection('connection_requests')
-        .where('toUserId', isEqualTo: currentUser.uid)
+        .where('toUserId', isEqualTo: currentUser.uid) // Only for recipient
         .where('status', isEqualTo: 'pending')
         .snapshots()
         .listen(
@@ -43,7 +46,7 @@ class PendingRequestWatcher {
           },
         );
 
-    // Listen for connection accepted notifications (for User B - the requester)
+    // Listen for connection accepted notifications (for User A - the original requester)
     _notificationSubscription = FirebaseFirestore.instance
         .collection('notifications')
         .where('userId', isEqualTo: currentUser.uid)
@@ -56,6 +59,10 @@ class PendingRequestWatcher {
             print('❌ Error watching notifications: $error');
           },
         );
+
+    print(
+      '✅ Listeners started - watching for requests TO user ${currentUser.uid}',
+    );
   }
 
   /// Stop listening for connection requests
@@ -71,14 +78,43 @@ class PendingRequestWatcher {
 
   /// Handle changes in connection requests collection
   static void _onRequestsChanged(QuerySnapshot snapshot) {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null) {
+      print('❌ No current user for processing requests');
+      return;
+    }
+
     print(
-      '📨 Connection requests snapshot received with ${snapshot.docs.length} documents',
+      '📨 Connection requests snapshot received with ${snapshot.docs.length} documents for user: ${currentUser.uid}',
     );
 
     for (final change in snapshot.docChanges) {
       if (change.type == DocumentChangeType.added) {
         final doc = change.doc;
         final requestId = doc.id;
+        final data = doc.data() as Map<String, dynamic>?;
+
+        if (data == null) {
+          print('❌ Invalid request data for: $requestId');
+          continue;
+        }
+
+        final toUserId = data['toUserId'] as String?;
+        final fromUserId = data['fromUserId'] as String?;
+
+        // Double-check: Only show to the recipient (toUserId)
+        if (toUserId != currentUser.uid) {
+          print(
+            '⚠️ Skipping request $requestId - not for current user (toUserId: $toUserId, currentUser: ${currentUser.uid})',
+          );
+          continue;
+        }
+
+        // Don't show alerts to the sender
+        if (fromUserId == currentUser.uid) {
+          print('⚠️ Skipping request $requestId - current user is the sender');
+          continue;
+        }
 
         // Skip if we've already shown this request
         if (_seenRequests.contains(requestId)) {
@@ -86,7 +122,9 @@ class PendingRequestWatcher {
           continue;
         }
 
-        print('🆕 New connection request detected: $requestId');
+        print(
+          '🆕 New connection request detected for recipient: $requestId (from: $fromUserId to: $toUserId)',
+        );
         _seenRequests.add(requestId);
         _showConnectionRequestDialog(doc);
       }
@@ -135,14 +173,26 @@ class PendingRequestWatcher {
 
       final fromUserId = data['fromUserId'] as String?;
       final fromUserName = data['fromUserName'] as String? ?? 'Unknown User';
+      final toUserId = data['toUserId'] as String?;
       final message = data['message'] as String?;
 
-      if (fromUserId == null) {
-        print('❌ Missing fromUserId in request data');
+      if (fromUserId == null || toUserId == null) {
+        print('❌ Missing fromUserId or toUserId in request data');
         return;
       }
 
-      print('🚀 Showing dialog for request from: $fromUserName');
+      // Final safety check - make sure current user is the recipient
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser == null || currentUser.uid != toUserId) {
+        print(
+          '❌ Dialog showing to wrong user! CurrentUser: ${currentUser?.uid}, ToUser: $toUserId',
+        );
+        return;
+      }
+
+      print(
+        '🚀 Showing dialog for request from: $fromUserName to: ${currentUser.uid}',
+      );
 
       final context = navigatorKey!.currentContext!;
       final accepted = await showDialog<bool>(
@@ -153,7 +203,7 @@ class PendingRequestWatcher {
             children: [
               Icon(Icons.person_add, color: Colors.blue),
               SizedBox(width: 8),
-              Text('New Connection Request'),
+              Text('New Request'),
             ],
           ),
           content: Column(
@@ -193,13 +243,19 @@ class PendingRequestWatcher {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(false),
-              child: const Text('Decline', style: TextStyle(color: Colors.red)),
+              child: const Text('Decline'),
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: Colors.black,
+                side: BorderSide(color: Colors.red),
+              ),
             ),
             ElevatedButton(
               onPressed: () => Navigator.of(dialogContext).pop(true),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                foregroundColor: Colors.white,
+                backgroundColor: Colors.white,
+                foregroundColor: Colors.black,
+                side: BorderSide(color: Colors.green),
               ),
               child: const Text('Accept'),
             ),

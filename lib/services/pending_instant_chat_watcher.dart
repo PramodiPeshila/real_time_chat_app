@@ -11,10 +11,29 @@ class PendingInstantChatWatcher {
   static final Set<String> _processedMessages = <String>{};
   // Track chat rooms we've already notified about for this session
   static final Set<String> _notifiedChatRooms = <String>{};
+  // Track the currently active chat room to suppress notifications
+  static String? _activeChatRoomId;
 
   /// Set the navigator key (should be called from main.dart)
   static void setNavigatorKey(GlobalKey<NavigatorState> key) {
     _navigatorKey = key;
+  }
+
+  /// Set the currently active chat room (suppress notifications for this chat)
+  static void setActiveChatRoom(String chatRoomId) {
+    _activeChatRoomId = chatRoomId;
+    print('🔇 Suppressing notifications for active chat: $chatRoomId');
+  }
+
+  /// Clear the active chat room (allow notifications again)
+  static void clearActiveChatRoom() {
+    final previousChatRoomId = _activeChatRoomId;
+    _activeChatRoomId = null;
+    if (previousChatRoomId != null) {
+      print(
+        '🔔 Re-enabling notifications, was suppressed for: $previousChatRoomId',
+      );
+    }
   }
 
   /// Start listening for incoming instant messages
@@ -74,6 +93,14 @@ class PendingInstantChatWatcher {
       if (_processedMessages.contains(messageId)) continue;
       _processedMessages.add(messageId);
 
+      // Skip notification if this chat room is currently active (user is viewing it)
+      if (_activeChatRoomId == fallbackChatRoomId) {
+        print(
+          '🔇 Skipping notification for active chat room: $fallbackChatRoomId',
+        );
+        continue;
+      }
+
       // Only show popup once per chat room until user opens it
       if (!_notifiedChatRooms.contains(fallbackChatRoomId)) {
         _showInstantMessageNotification(messageData);
@@ -97,7 +124,7 @@ class PendingInstantChatWatcher {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(

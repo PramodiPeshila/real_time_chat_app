@@ -216,7 +216,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           // Edit/Save Buttons
                           if (_isEditing)
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+
                               children: [
                                 TextButton(
                                   onPressed: () {

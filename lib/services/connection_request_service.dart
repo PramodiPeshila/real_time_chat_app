@@ -71,7 +71,7 @@ class ConnectionRequestService {
       await _createNotification(
         userId: toUserId,
         type: 'connection_request',
-        title: 'New Connection Request',
+        title: 'Connection Request',
         body:
             '${currentUser.displayName ?? 'Someone'} wants to connect with you',
         data: {'requestId': requestId, 'fromUserId': currentUser.uid},
