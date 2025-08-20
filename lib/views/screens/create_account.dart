@@ -128,7 +128,6 @@ class _CreateAccountState extends State<CreateAccount> {
                     SizedBox(height: size.height / 30),
 
                     _buildCustomButton(size),
-                    
                   ],
                 ),
               ),

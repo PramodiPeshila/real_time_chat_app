@@ -170,7 +170,10 @@ class _ContactsScreenState extends State<ContactsScreen> {
                             value: 'chat',
                             child: Row(
                               children: [
-                                Icon(Icons.chat, color: Color.fromARGB(255, 0, 94, 255)),
+                                Icon(
+                                  Icons.chat,
+                                  color: Color.fromARGB(255, 0, 94, 255),
+                                ),
                                 SizedBox(width: 8),
                                 Text('Start Chat'),
                               ],
@@ -243,7 +246,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
                 backgroundColor: Colors.white,
                 foregroundColor: Colors.black,
                 side: BorderSide(color: Colors.blue),
-                ),
+              ),
             ),
             TextButton(
               onPressed: () {
@@ -254,7 +257,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
                 backgroundColor: Colors.white,
                 foregroundColor: Colors.black,
                 side: BorderSide(color: Colors.red),
-                ),
+              ),
               child: const Text('Delete'),
             ),
           ],

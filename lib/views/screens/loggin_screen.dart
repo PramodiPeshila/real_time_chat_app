@@ -119,7 +119,6 @@ class _LogginscreenState extends State<Logginscreen> {
                     ),
                     SizedBox(height: size.height / 30),
                     _buildLoginButton(size),
-                    
                   ],
                 ),
               ),

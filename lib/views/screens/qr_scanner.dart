@@ -93,7 +93,6 @@ class _QRScannerState extends State<QRScanner> {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 8),
-                  
                 ],
               ),
             ),
@@ -110,7 +109,7 @@ class _QRScannerState extends State<QRScanner> {
       if (scanData.code != null && scanData.code!.isNotEmpty) {
         // Pause scanning immediately
         controller.pauseCamera();
-        
+
         // Navigate directly to InstantChatView without showing "User Found"
         _startInstantChat(scanData.code!);
       }

@@ -25,16 +25,16 @@ class AppRoutes {
   static const String connectionRequests = '/connection-requests';
 
   static Map<String, WidgetBuilder> get routes => {
-        welcome: (context) => const WelcomeScreen(),
-        login: (context) => const Logginscreen(),
-        createAccount: (context) => const CreateAccount(),
-        home: (context) => const HomeScreen(),
-        contacts: (context) => const ContactsScreen(),
-        profile: (context) => const ProfileScreen(),
-        qrGenerator: (context) => const QRGenerator(),
-        qrScanner: (context) => const QRScanner(),
-        connectionRequests: (context) => const ConnectionRequestsPage(),
-      };
+    welcome: (context) => const WelcomeScreen(),
+    login: (context) => const Logginscreen(),
+    createAccount: (context) => const CreateAccount(),
+    home: (context) => const HomeScreen(),
+    contacts: (context) => const ContactsScreen(),
+    profile: (context) => const ProfileScreen(),
+    qrGenerator: (context) => const QRGenerator(),
+    qrScanner: (context) => const QRScanner(),
+    connectionRequests: (context) => const ConnectionRequestsPage(),
+  };
 
   static Route<dynamic>? generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -54,9 +54,8 @@ class AppRoutes {
         final args = settings.arguments as Map<String, String>?;
         if (args != null) {
           return MaterialPageRoute(
-            builder: (context) => InstantChatView(
-              scannedData: args['scannedData']!,
-            ),
+            builder: (context) =>
+                InstantChatView(scannedData: args['scannedData']!),
           );
         }
         break;

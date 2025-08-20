@@ -13,10 +13,10 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  
+
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  
+
   bool _isEditing = false;
   bool _isLoading = false;
   Map<String, dynamic>? _userData;
@@ -37,8 +37,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       final user = _auth.currentUser;
       if (user != null) {
         // Get user data from Firestore
-        final userDoc = await _firestore.collection('users').doc(user.uid).get();
-        
+        final userDoc = await _firestore
+            .collection('users')
+            .doc(user.uid)
+            .get();
+
         if (userDoc.exists) {
           _userData = userDoc.data();
           _nameController.text = _userData?['name'] ?? user.displayName ?? '';
@@ -48,7 +51,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           // If no Firestore document exists, use Firebase Auth data
           _nameController.text = user.displayName ?? '';
           _emailController.text = user.email ?? '';
-          
+
           // Create initial user document in Firestore
           await _createInitialUserDocument(user);
         }
@@ -128,7 +131,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final user = _auth.currentUser;
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile'),
@@ -136,7 +139,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         elevation: 4,
         shadowColor: Colors.blue,
         foregroundColor: Colors.black,
-         actions: [
+        actions: [
           // Edit / Save button
           if (!_isEditing)
             IconButton(
@@ -148,24 +151,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 });
               },
             ),
-          
-          
-           IconButton(
-             icon: const Icon(Icons.logout, color: Colors.black),
-             onPressed: () async {
-               await logOut();
-               if (mounted) {
-                 //navigate to new screen
-                 Navigator.pushNamedAndRemoveUntil(
-                   context, 
-                   '/login', 
-                   (route) => false,
-                 );
-               }
-             },
-           ),
-         ],
-       ),
+
+          IconButton(
+            icon: const Icon(Icons.logout, color: Colors.black),
+            onPressed: () async {
+              await logOut();
+              if (mounted) {
+                //navigate to new screen
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  '/login',
+                  (route) => false,
+                );
+              }
+            },
+          ),
+        ],
+      ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
@@ -175,7 +177,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   // Profile Picture Section
                   _buildProfilePicture(),
                   const SizedBox(height: 30),
-                  
+
                   // User Info Card
                   Card(
                     elevation: 4,
@@ -193,7 +195,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                           ),
                           const SizedBox(height: 20),
-                          
+
                           // Name Field
                           _buildTextField(
                             controller: _nameController,
@@ -202,7 +204,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             enabled: _isEditing,
                           ),
                           const SizedBox(height: 16),
-                          
+
                           // Email Field
                           _buildTextField(
                             controller: _emailController,
@@ -211,7 +213,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             enabled: false, // Email should not be editable
                           ),
                           const SizedBox(height: 20),
-                          
+
                           // Edit/Save Buttons
                           if (_isEditing)
                             Row(
@@ -227,10 +229,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     });
                                   },
                                   style: TextButton.styleFrom(
-                                    backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-                                    side: BorderSide(color: Colors.blue.shade300),
+                                    backgroundColor: const Color.fromARGB(
+                                      255,
+                                      255,
+                                      255,
+                                      255,
+                                    ),
+                                    side: BorderSide(
+                                      color: Colors.blue.shade300,
+                                    ),
                                     foregroundColor: Colors.black,
-                                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 20,
+                                      vertical: 8,
+                                    ),
                                   ),
                                   child: const Text('Cancel'),
                                 ),
@@ -238,7 +250,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ElevatedButton(
                                   onPressed: _updateProfile,
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color.fromARGB(255, 0, 94, 255),
+                                    backgroundColor: const Color.fromARGB(
+                                      255,
+                                      0,
+                                      94,
+                                      255,
+                                    ),
                                     foregroundColor: Colors.white,
                                   ),
                                   child: const Text('Save Changes'),
@@ -249,9 +266,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                   ),
-                  
+
                   const SizedBox(height: 20),
-                  
+
                   // Account Info Card
                   Card(
                     elevation: 4,
@@ -269,31 +286,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                           ),
                           const SizedBox(height: 16),
-                          
+
                           // _buildInfoRow('User ID', user?.uid ?? 'N/A'),
                           // const SizedBox(height: 12),
                           _buildInfoRow(
-                            'Account Created', 
+                            'Account Created',
                             user?.metadata.creationTime != null
                                 ? _formatDate(user!.metadata.creationTime!)
-                                : 'N/A'
+                                : 'N/A',
                           ),
                           const SizedBox(height: 12),
                           _buildInfoRow(
-                            'Last Sign In', 
+                            'Last Sign In',
                             user?.metadata.lastSignInTime != null
                                 ? _formatDate(user!.metadata.lastSignInTime!)
-                                : 'N/A'
+                                : 'N/A',
                           ),
                         ],
                       ),
                     ),
                   ),
-                  
+
                   const SizedBox(height: 20),
-                  
+
                   // Generate QR Code Button
-                  
                 ],
               ),
             ),
@@ -307,12 +323,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
           CircleAvatar(
             radius: 60,
             backgroundColor: const Color.fromARGB(255, 0, 94, 255),
-            backgroundImage: _profileImageUrl != null 
-                ? NetworkImage(_profileImageUrl!) 
+            backgroundImage: _profileImageUrl != null
+                ? NetworkImage(_profileImageUrl!)
                 : null,
             child: _profileImageUrl == null
                 ? Text(
-                    _nameController.text.isNotEmpty 
+                    _nameController.text.isNotEmpty
                         ? _nameController.text[0].toUpperCase()
                         : '?',
                     style: const TextStyle(
@@ -333,7 +349,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   shape: BoxShape.circle,
                 ),
                 child: IconButton(
-                  icon: const Icon(Icons.camera_alt, color: Colors.white, size: 20),
+                  icon: const Icon(
+                    Icons.camera_alt,
+                    color: Colors.white,
+                    size: 20,
+                  ),
                   onPressed: () {
                     // TODO: Implement image picker
                     _showSnackBar('Photo upload feature coming soon!');
@@ -358,9 +378,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: Icon(icon, color: Colors.grey),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: const BorderSide(color: Colors.blue, width: 2),
@@ -402,8 +420,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String _formatDate(DateTime date) {
     return '${date.day}/${date.month}/${date.year}';
   }
-
-
 
   @override
   void dispose() {

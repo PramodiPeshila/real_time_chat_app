@@ -24,8 +24,6 @@ class WelcomeScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              
-
               const SizedBox(height: 40),
 
               // Welcome Text
@@ -44,7 +42,6 @@ class WelcomeScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  
                   borderRadius: BorderRadius.circular(100),
                 ),
                 child: Image.asset(
@@ -54,7 +51,6 @@ class WelcomeScreen extends StatelessWidget {
                 ),
               ),
 
-              
               const SizedBox(height: 80),
 
               // Sign In Button
