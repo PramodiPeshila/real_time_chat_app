@@ -63,8 +63,8 @@ class _QRGeneratorState extends State<QRGenerator> {
             children: [
               // User Avatar
               Container(
-                width: 120,
-                height: 120,
+                width: 100,
+                height: 100,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: const Color.fromARGB(255, 0, 94, 255),
@@ -120,7 +120,7 @@ class _QRGeneratorState extends State<QRGenerator> {
                       QrImageView(
                         data: userQRData!,
                         version: QrVersions.auto,
-                        size: 250.0,
+                        size: 230.0,
                         gapless: false,
                         backgroundColor: Colors.white,
                         dataModuleStyle: const QrDataModuleStyle(
@@ -173,15 +173,16 @@ class _QRGeneratorState extends State<QRGenerator> {
                       backgroundColor: const Color.fromARGB(255, 0, 94, 255),
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
+                        horizontal: 30,
                         vertical: 12,
                       ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(25),
                       ),
+                      
                     ),
                     icon: const Icon(Icons.qr_code_scanner),
-                    label: const Text('Scan'),
+                    label: const Text('Scan' , style: TextStyle(fontWeight: FontWeight.w700 , fontSize: 16)),
                   ),
                 ],
               ),
@@ -193,23 +194,5 @@ class _QRGeneratorState extends State<QRGenerator> {
     );
   }
 
-  void _shareQRCode() {
-    // Implement share functionality here
-    // You can use the 'share_plus' package for sharing
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Share QR Code'),
-        content: const Text(
-          'QR code sharing feature will be implemented here.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
-  }
+  
 }
