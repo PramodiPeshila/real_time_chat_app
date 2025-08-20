@@ -60,7 +60,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'LinkTalk',
         theme: ThemeData(primarySwatch: Colors.blue, useMaterial3: true),
-        home: const WelcomeScreen(),
+        home: const Authenticate(),
         routes: {
           '/welcome': (context) => const WelcomeScreen(),
           '/login': (context) => const Logginscreen(),
