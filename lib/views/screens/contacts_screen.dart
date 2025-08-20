@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:realtime_chat_app/components/footer.dart';
-import 'package:realtime_chat_app/services/contact_service.dart';
+import 'package:realtime_chat_app/views/widgets/footer.dart';
+import 'package:realtime_chat_app/controllers/contact_service.dart';
 import 'package:realtime_chat_app/models/contact.dart';
-import 'package:realtime_chat_app/pages/instant_chat_screen.dart';
+import 'package:realtime_chat_app/views/screens/instant_chat_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class ContactsScreen extends StatefulWidget {

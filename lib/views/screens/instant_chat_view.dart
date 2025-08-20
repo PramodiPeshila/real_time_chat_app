@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:realtime_chat_app/services/contact_service.dart';
-import 'package:realtime_chat_app/services/connection_request_service.dart';
-import 'package:realtime_chat_app/pages/instant_chat_screen.dart';
+import 'package:realtime_chat_app/controllers/contact_service.dart';
+import 'package:realtime_chat_app/controllers/connection_request_service.dart';
+import 'package:realtime_chat_app/views/screens/instant_chat_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class InstantChatView extends StatefulWidget {

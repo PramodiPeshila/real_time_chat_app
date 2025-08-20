@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:realtime_chat_app/components/footer.dart';
+import 'package:realtime_chat_app/views/widgets/footer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:realtime_chat_app/pages/qr_scanner.dart';
+import 'package:realtime_chat_app/views/screens/qr_scanner.dart';
 
 class QRGenerator extends StatefulWidget {
   const QRGenerator({super.key});

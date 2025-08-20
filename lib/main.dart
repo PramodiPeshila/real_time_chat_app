@@ -1,13 +1,13 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 // Firestore
-import 'package:realtime_chat_app/pages/authenticate.dart';
-import 'package:realtime_chat_app/pages/loggin_screen.dart';
-import 'package:realtime_chat_app/pages/welcome_screen.dart';
-import 'package:realtime_chat_app/components/notification_wrapper.dart';
-import 'package:realtime_chat_app/services/pending_request_watcher.dart';
-import 'package:realtime_chat_app/services/pending_instant_chat_watcher.dart';
-import 'firebase_options.dart';
+import 'package:realtime_chat_app/views/screens/authenticate.dart';
+import 'package:realtime_chat_app/views/screens/loggin_screen.dart';
+import 'package:realtime_chat_app/views/screens/welcome_screen.dart';
+import 'package:realtime_chat_app/views/widgets/notification_wrapper.dart';
+import 'package:realtime_chat_app/controllers/pending_request_watcher.dart';
+import 'package:realtime_chat_app/controllers/pending_instant_chat_watcher.dart';
+import 'config/firebase_options.dart';
 
 // Global navigator key for showing dialogs from anywhere
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();

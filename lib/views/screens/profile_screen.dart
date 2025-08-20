@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:realtime_chat_app/pages/methods.dart';
-// import 'package:realtime_chat_app/components/footer.dart';
+import 'package:realtime_chat_app/controllers/auth_controller.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});

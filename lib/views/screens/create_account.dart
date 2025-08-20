@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:realtime_chat_app/pages/methods.dart';
+import 'package:realtime_chat_app/controllers/auth_controller.dart';
 
 class CreateAccount extends StatefulWidget {
   const CreateAccount({super.key});

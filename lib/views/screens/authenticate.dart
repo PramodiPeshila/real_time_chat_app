@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:realtime_chat_app/pages/home_screen.dart';
-import 'package:realtime_chat_app/pages/loggin_screen.dart';
+import 'package:realtime_chat_app/views/screens/home_screen.dart';
+import 'package:realtime_chat_app/views/screens/loggin_screen.dart';
 
 class Authenticate extends StatelessWidget {
   const Authenticate({super.key});
