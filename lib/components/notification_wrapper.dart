@@ -24,6 +24,7 @@ class _NotificationWrapperState extends State<NotificationWrapper> {
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
       if (user != null) {
         // User is signed in, start listening for connection requests and instant messages
+        // ignore: avoid_print
         print('🔔 User authenticated, starting PendingRequestWatcher');
         PendingRequestWatcher.startListening();
 
