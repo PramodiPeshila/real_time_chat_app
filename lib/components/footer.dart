@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:realtime_chat_app/pages/profile_screen.dart';
 import 'package:realtime_chat_app/pages/qr_genetator.dart';
 import 'package:realtime_chat_app/pages/home_screen.dart';
-import 'package:realtime_chat_app/pages/contacts_screen.dart';
 
 class Footer extends StatefulWidget {
   const Footer({super.key});
@@ -12,21 +11,29 @@ class Footer extends StatefulWidget {
 }
 
 class _FooterState extends State<Footer> {
-  int _selectedIndex = 1; // 0: Conversations, 1: Center (QR), 2: Contacts, 3: Profile
+  int _selectedIndex =
+      1; // 0: Conversations, 1: Center (QR), 2: Contacts, 3: Profile
+
+  // Customize icon sizes and colors here
+  final double _navIconSize = 28; // size for left/right nav icons
+  final Color _selectedIconColor = Colors.black;
+
+  final double _centerFabIconSize = 30; // size for center QR icon
+  final Color _centerFabIconColor = Colors.white;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       height: 80,
       decoration: BoxDecoration(
-        color: Colors.blue,
+        color: Colors.white,
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(20),
           topRight: Radius.circular(20),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.white,
+            color: Colors.blue,
             blurRadius: 10,
             offset: const Offset(0, -2),
           ),
@@ -36,14 +43,16 @@ class _FooterState extends State<Footer> {
         children: [
           // Bottom navigation items
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 40),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
               children: [
                 // Conversations (Left)
                 _buildNavItem(
-                  icon: Icons.chat_bubble_outline,
-                  label: "Conversations",
+                  icon: Icons.chat,
+
+                  label: "Chat",
                   index: 0,
                   onTap: () {
                     setState(() {
@@ -55,34 +64,15 @@ class _FooterState extends State<Footer> {
                         builder: (context) => const HomeScreen(),
                       ),
                     );
+                    // ignore: avoid_print
                     print("Home tapped");
                   },
                 ),
 
-                // Contacts (Center Left)
-                _buildNavItem(
-                  icon: Icons.contacts_outlined,
-                  label: "Contacts",
-                  index: 2,
-                  onTap: () {
-                    setState(() {
-                      _selectedIndex = 2;
-                    });
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const ContactsScreen(),
-                      ),
-                    );
-                    print("Contacts tapped");
-                  },
-                ),
-
                 const SizedBox(width: 60), // Space for center FAB
-
                 // Profile (Right)
                 _buildNavItem(
-                  icon: Icons.person_outline,
+                  icon: Icons.person,
                   label: "Profile",
                   index: 3,
                   onTap: () {
@@ -95,6 +85,7 @@ class _FooterState extends State<Footer> {
                         builder: (context) => const ProfileScreen(),
                       ),
                     );
+                    // ignore: avoid_print
                     print("Profile tapped");
                   },
                 ),
@@ -115,6 +106,7 @@ class _FooterState extends State<Footer> {
                   context,
                   MaterialPageRoute(builder: (context) => const QRGenerator()),
                 );
+                // ignore: avoid_print
                 print("QR Generator opened");
               },
               child: Container(
@@ -138,7 +130,11 @@ class _FooterState extends State<Footer> {
                   //   ),
                   // ],
                 ),
-                child: const Icon(Icons.qr_code, color: Colors.white, size: 28),
+                child: Icon(
+                  Icons.qr_code,
+                  color: _centerFabIconColor,
+                  size: _centerFabIconSize,
+                ),
               ),
             ),
           ),
@@ -154,8 +150,8 @@ class _FooterState extends State<Footer> {
     required VoidCallback onTap,
   }) {
     bool isSelected = _selectedIndex == index;
-    Color iconColor = isSelected ? Colors.white : Colors.grey[100]!;
-    Color textColor = isSelected ? Colors.white : Colors.grey[100]!;
+    Color iconColor = _selectedIconColor;
+    Color textColor = _selectedIconColor;
     FontWeight fontWeight = isSelected ? FontWeight.w600 : FontWeight.normal;
 
     return GestureDetector(
@@ -166,7 +162,7 @@ class _FooterState extends State<Footer> {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 24, color: iconColor),
+            Icon(icon, size: _navIconSize, color: iconColor),
             const SizedBox(height: 4),
             Text(
               label,
