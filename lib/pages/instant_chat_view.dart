@@ -162,24 +162,7 @@ class _InstantChatViewState extends State<InstantChatView> {
                             ],
                           ),
                           const SizedBox(height: 10),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(
-                                Icons.person,
-                                size: 16,
-                                color: Colors.grey,
-                              ),
-                              const SizedBox(width: 5),
-                              Text(
-                                'ID: ${userData!['userId']?.toString().substring(0, 8) ?? 'Unknown'}...',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey[600],
-                                ),
-                              ),
-                            ],
-                          ),
+                          
                         ],
                       ),
                     ),
@@ -405,10 +388,20 @@ class _InstantChatViewState extends State<InstantChatView> {
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
             child: const Text('Cancel'),
+            style: TextButton.styleFrom(
+              backgroundColor: Colors.white,
+              foregroundColor: Colors.black,
+              side: BorderSide(color: Colors.red),
+            ),
           ),
           ElevatedButton(
             onPressed: () => Navigator.of(context).pop(true),
             child: const Text('Send Request'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
+              foregroundColor: Colors.black,
+              side: BorderSide(color: Colors.blue),
+            ),
           ),
         ],
       ),
