@@ -3,7 +3,6 @@ import 'package:realtime_chat_app/components/footer.dart';
 import 'package:realtime_chat_app/services/contact_service.dart';
 import 'package:realtime_chat_app/models/contact.dart';
 import 'package:realtime_chat_app/pages/instant_chat_screen.dart';
-import 'package:realtime_chat_app/pages/connection_requests_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class ContactsScreen extends StatefulWidget {
@@ -59,31 +58,13 @@ class _ContactsScreenState extends State<ContactsScreen> {
       appBar: AppBar(
         title: const Text(
           'My Contacts',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.blue,
-        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: Colors.white,
+        elevation: 4,
+        shadowColor: Colors.blue,
+        iconTheme: const IconThemeData(color: Colors.black),
         actions: [
-          // Temporarily disable notification badge for debugging
-          Stack(
-            children: [
-              IconButton(
-                icon: const Icon(Icons.inbox, color: Colors.white),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const ConnectionRequestsPage(),
-                    ),
-                  ).then(
-                    (_) => _loadContacts(),
-                  ); // Refresh contacts when returning
-                },
-                tooltip: 'Connection Requests',
-              ),
-              // Badge temporarily disabled for debugging
-            ],
-          ),
           IconButton(icon: const Icon(Icons.refresh), onPressed: _loadContacts),
         ],
       ),
@@ -136,7 +117,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
                       ),
                       leading: CircleAvatar(
                         radius: 25,
-                        backgroundColor: Colors.blue,
+                        backgroundColor: const Color.fromARGB(255, 0, 94, 255),
                         child: Text(
                           contact.displayName.isNotEmpty
                               ? contact.displayName[0].toUpperCase()
@@ -189,7 +170,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
                             value: 'chat',
                             child: Row(
                               children: [
-                                Icon(Icons.chat, color: Colors.blue),
+                                Icon(Icons.chat, color: Color.fromARGB(255, 0, 94, 255)),
                                 SizedBox(width: 8),
                                 Text('Start Chat'),
                               ],
