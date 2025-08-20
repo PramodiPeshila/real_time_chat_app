@@ -80,10 +80,12 @@ class _InstantChatViewState extends State<InstantChatView> {
       appBar: AppBar(
         title: const Text(
           'New Contact',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.blue,
-        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: Colors.white,
+        elevation: 4,
+        shadowColor: Colors.blue,
+        iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: userData == null
           ? const Center(child: CircularProgressIndicator())
@@ -99,11 +101,7 @@ class _InstantChatViewState extends State<InstantChatView> {
                     height: 120,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      gradient: LinearGradient(
-                        colors: [Colors.blue[400]!, Colors.blue[600]!],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
+                      color: const Color.fromARGB(255, 0, 94, 255),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.blue.withOpacity(0.3),
@@ -228,7 +226,7 @@ class _InstantChatViewState extends State<InstantChatView> {
                         child: ElevatedButton.icon(
                           onPressed: () => _startChat(),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue,
+                            backgroundColor: const Color.fromARGB(255, 0, 94, 255),
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(vertical: 15),
                             shape: RoundedRectangleBorder(
@@ -304,7 +302,8 @@ class _InstantChatViewState extends State<InstantChatView> {
                                     width: 16,
                                     height: 16,
                                     child: CircularProgressIndicator(
-                                      strokeWidth: 2,
+                                      
+                                      strokeWidth: 3,
                                       color: Colors.white,
                                     ),
                                   )
@@ -314,8 +313,9 @@ class _InstantChatViewState extends State<InstantChatView> {
                                   ? 'Removing...'
                                   : 'Remove Contact',
                               style: const TextStyle(
-                                fontSize: 16,
+                                fontSize: 14,
                                 fontWeight: FontWeight.w600,
+                                
                               ),
                             ),
                           ),
