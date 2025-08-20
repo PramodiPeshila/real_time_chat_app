@@ -29,6 +29,9 @@ class _InstantChatScreenState extends State<InstantChatScreen> {
   bool _isLoading = false;
 
   Future<bool> _confirmAndDeleteOnExit() async {
+    // Clear active chat room suppression when leaving
+    PendingInstantChatWatcher.clearActiveChatRoom();
+
     // For contact-based (persistent) chats, do not delete on exit
     if (!mounted || widget.ephemeral == false) {
       return true; // allow pop without deletion
@@ -87,11 +90,15 @@ class _InstantChatScreenState extends State<InstantChatScreen> {
     // Mark messages as read when opening chat
     WidgetsBinding.instance.addPostFrameCallback((_) {
       InstantChatService.markMessagesAsRead(chatRoomId, currentUserId);
+      // Suppress notifications for this chat while user is viewing it
+      PendingInstantChatWatcher.setActiveChatRoom(chatRoomId);
     });
   }
 
   @override
   void dispose() {
+    // Re-enable notifications when leaving this chat screen
+    PendingInstantChatWatcher.clearActiveChatRoom();
     _messageController.dispose();
     _scrollController.dispose();
     super.dispose();
