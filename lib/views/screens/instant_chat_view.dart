@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:realtime_chat_app/services/contact_service.dart';
-import 'package:realtime_chat_app/services/connection_request_service.dart';
-import 'package:realtime_chat_app/pages/instant_chat_screen.dart';
+import 'package:realtime_chat_app/controllers/contact_service.dart';
+import 'package:realtime_chat_app/controllers/connection_request_service.dart';
+import 'package:realtime_chat_app/views/screens/instant_chat_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class InstantChatView extends StatefulWidget {
@@ -162,7 +162,6 @@ class _InstantChatViewState extends State<InstantChatView> {
                             ],
                           ),
                           const SizedBox(height: 10),
-                          
                         ],
                       ),
                     ),
@@ -209,7 +208,12 @@ class _InstantChatViewState extends State<InstantChatView> {
                         child: ElevatedButton.icon(
                           onPressed: () => _startChat(),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color.fromARGB(255, 0, 94, 255),
+                            backgroundColor: const Color.fromARGB(
+                              255,
+                              0,
+                              94,
+                              255,
+                            ),
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(vertical: 15),
                             shape: RoundedRectangleBorder(
@@ -285,7 +289,6 @@ class _InstantChatViewState extends State<InstantChatView> {
                                     width: 16,
                                     height: 16,
                                     child: CircularProgressIndicator(
-                                      
                                       strokeWidth: 3,
                                       color: Colors.white,
                                     ),
@@ -298,7 +301,6 @@ class _InstantChatViewState extends State<InstantChatView> {
                               style: const TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
-                                
                               ),
                             ),
                           ),

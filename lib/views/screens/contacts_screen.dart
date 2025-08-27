@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:realtime_chat_app/components/footer.dart';
-import 'package:realtime_chat_app/services/contact_service.dart';
+import 'package:realtime_chat_app/views/widgets/footer.dart';
+import 'package:realtime_chat_app/controllers/contact_service.dart';
 import 'package:realtime_chat_app/models/contact.dart';
-import 'package:realtime_chat_app/pages/instant_chat_screen.dart';
+import 'package:realtime_chat_app/views/screens/instant_chat_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class ContactsScreen extends StatefulWidget {
@@ -170,7 +170,10 @@ class _ContactsScreenState extends State<ContactsScreen> {
                             value: 'chat',
                             child: Row(
                               children: [
-                                Icon(Icons.chat, color: Color.fromARGB(255, 0, 94, 255)),
+                                Icon(
+                                  Icons.chat,
+                                  color: Color.fromARGB(255, 0, 94, 255),
+                                ),
                                 SizedBox(width: 8),
                                 Text('Start Chat'),
                               ],
@@ -243,7 +246,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
                 backgroundColor: Colors.white,
                 foregroundColor: Colors.black,
                 side: BorderSide(color: Colors.blue),
-                ),
+              ),
             ),
             TextButton(
               onPressed: () {
@@ -254,7 +257,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
                 backgroundColor: Colors.white,
                 foregroundColor: Colors.black,
                 side: BorderSide(color: Colors.red),
-                ),
+              ),
               child: const Text('Delete'),
             ),
           ],

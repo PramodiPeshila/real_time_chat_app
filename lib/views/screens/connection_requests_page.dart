@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:realtime_chat_app/models/connection_request.dart';
-import 'package:realtime_chat_app/services/connection_request_service.dart';
-import 'package:realtime_chat_app/pages/instant_chat_screen.dart';
+import 'package:realtime_chat_app/controllers/connection_request_service.dart';
+import 'package:realtime_chat_app/views/screens/instant_chat_screen.dart';
 
 class ConnectionRequestsPage extends StatefulWidget {
   const ConnectionRequestsPage({super.key});

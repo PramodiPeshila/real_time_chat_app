@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:realtime_chat_app/components/footer.dart';
+import 'package:realtime_chat_app/views/widgets/footer.dart';
 import 'package:qr_code_scanner_plus/qr_code_scanner_plus.dart';
 import 'dart:io';
 
-import 'package:realtime_chat_app/pages/instant_chat_view.dart';
+import 'package:realtime_chat_app/views/screens/instant_chat_view.dart';
 
 class QRScanner extends StatefulWidget {
   const QRScanner({super.key});
@@ -93,7 +93,6 @@ class _QRScannerState extends State<QRScanner> {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 8),
-                  
                 ],
               ),
             ),
@@ -110,7 +109,7 @@ class _QRScannerState extends State<QRScanner> {
       if (scanData.code != null && scanData.code!.isNotEmpty) {
         // Pause scanning immediately
         controller.pauseCamera();
-        
+
         // Navigate directly to InstantChatView without showing "User Found"
         _startInstantChat(scanData.code!);
       }

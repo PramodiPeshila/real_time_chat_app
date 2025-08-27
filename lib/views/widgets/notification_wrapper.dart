@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:realtime_chat_app/services/pending_request_watcher.dart';
-import 'package:realtime_chat_app/services/pending_instant_chat_watcher.dart';
+import 'package:realtime_chat_app/controllers/pending_request_watcher.dart';
+import 'package:realtime_chat_app/controllers/pending_instant_chat_watcher.dart';
 
 class NotificationWrapper extends StatefulWidget {
   final Widget child;

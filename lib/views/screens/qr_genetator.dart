@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:realtime_chat_app/components/footer.dart';
+import 'package:realtime_chat_app/views/widgets/footer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:realtime_chat_app/pages/qr_scanner.dart';
+import 'package:realtime_chat_app/views/screens/qr_scanner.dart';
 
 class QRGenerator extends StatefulWidget {
   const QRGenerator({super.key});
@@ -70,7 +70,12 @@ class _QRGeneratorState extends State<QRGenerator> {
                   color: const Color.fromARGB(255, 0, 94, 255),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color.fromARGB(255, 0, 94, 255).withOpacity(0.3),
+                      color: const Color.fromARGB(
+                        255,
+                        0,
+                        94,
+                        255,
+                      ).withOpacity(0.3),
                       blurRadius: 15,
                       spreadRadius: 2,
                       offset: const Offset(0, 5),
@@ -157,7 +162,6 @@ class _QRGeneratorState extends State<QRGenerator> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   // Share Button
-                  
 
                   // Scan Button
                   ElevatedButton.icon(
@@ -179,10 +183,15 @@ class _QRGeneratorState extends State<QRGenerator> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(25),
                       ),
-                      
                     ),
                     icon: const Icon(Icons.qr_code_scanner),
-                    label: const Text('Scan' , style: TextStyle(fontWeight: FontWeight.w700 , fontSize: 16)),
+                    label: const Text(
+                      'Scan',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 16,
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -193,6 +202,4 @@ class _QRGeneratorState extends State<QRGenerator> {
       bottomNavigationBar: const Footer(),
     );
   }
-
-  
 }

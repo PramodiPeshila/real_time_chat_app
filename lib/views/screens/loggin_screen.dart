@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:realtime_chat_app/pages/methods.dart';
+import 'package:realtime_chat_app/views/screens/create_account.dart';
+import 'package:realtime_chat_app/controllers/auth_controller.dart';
+import 'package:realtime_chat_app/views/screens/home_screen.dart';
 
-class CreateAccount extends StatefulWidget {
-  const CreateAccount({super.key});
+class Logginscreen extends StatefulWidget {
+  const Logginscreen({super.key});
 
   @override
   // ignore: library_private_types_in_public_api
-  _CreateAccountState createState() => _CreateAccountState();
+  _LogginscreenState createState() => _LogginscreenState();
 }
 
-class _CreateAccountState extends State<CreateAccount> {
-  final TextEditingController _name = TextEditingController();
+class _LogginscreenState extends State<Logginscreen> {
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
   bool isLoading = false;
@@ -41,8 +42,7 @@ class _CreateAccountState extends State<CreateAccount> {
                 child: Column(
                   children: [
                     SizedBox(height: size.height / 10),
-
-                    SizedBox(height: size.height / 20),
+                    SizedBox(height: size.height / 10),
                     Container(
                       child: Image.asset(
                         "lib/assets/icon.png",
@@ -56,7 +56,7 @@ class _CreateAccountState extends State<CreateAccount> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           const Text(
-                            "Sign up to LinkTalk",
+                            "Sign in to LinkTalk",
                             style: TextStyle(
                               color: Colors.black,
                               fontSize: 25,
@@ -66,6 +66,7 @@ class _CreateAccountState extends State<CreateAccount> {
                         ],
                       ),
                     ),
+
                     SizedBox(
                       width: size.width / 1.3,
                       child: Row(
@@ -80,12 +81,16 @@ class _CreateAccountState extends State<CreateAccount> {
                             ),
                           ),
                           GestureDetector(
-                            onTap: () => Navigator.pop(context),
+                            onTap: () => Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => const CreateAccount(),
+                              ),
+                            ),
                             child: const Text(
-                              " Login",
+                              "  Sign Up",
                               style: TextStyle(
                                 color: Colors.blue,
-                                fontSize: 20,
+                                fontSize: 18,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -93,20 +98,7 @@ class _CreateAccountState extends State<CreateAccount> {
                         ],
                       ),
                     ),
-                    SizedBox(height: size.height / 20),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 18.0),
-                      child: Container(
-                        width: size.width,
-                        alignment: Alignment.center,
-                        child: _buildField(
-                          size,
-                          "Name",
-                          Icons.account_box,
-                          _name,
-                        ),
-                      ),
-                    ),
+                    SizedBox(height: size.height / 30),
                     Container(
                       width: size.width,
                       alignment: Alignment.center,
@@ -126,9 +118,7 @@ class _CreateAccountState extends State<CreateAccount> {
                       ),
                     ),
                     SizedBox(height: size.height / 30),
-
-                    _buildCustomButton(size),
-                    
+                    _buildLoginButton(size),
                   ],
                 ),
               ),
@@ -136,42 +126,39 @@ class _CreateAccountState extends State<CreateAccount> {
     );
   }
 
-  Widget _buildCustomButton(Size size) {
+  Widget _buildLoginButton(Size size) {
     return GestureDetector(
       onTap: () async {
-        if (_name.text.isNotEmpty &&
-            _email.text.isNotEmpty &&
-            _password.text.isNotEmpty) {
+        if (_email.text.isNotEmpty && _password.text.isNotEmpty) {
           setState(() {
             isLoading = true;
           });
 
           try {
-            final user = await createAccount(
-              _name.text,
-              _email.text,
-              _password.text,
-            );
+            final user = await logIn(_email.text, _password.text);
 
             setState(() {
               isLoading = false;
             });
 
             if (user != null) {
-              print("Account Created Successfully");
-              if (mounted) {
-                Navigator.pop(context);
-              }
+              print("Login Successfully");
+              _showSuccessMessage("Login successful! Welcome ");
+              // Navigate to home screen
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const HomeScreen()),
+              );
             } else {
-              print("Account Creation Failed");
-              _showErrorMessage("Account creation failed. Please try again.");
+              print("Login Failed");
+              _showErrorMessage("Login failed. Please check your credentials.");
             }
           } catch (e) {
             setState(() {
               isLoading = false;
             });
             print("Error: $e");
-            _showErrorMessage("An error occurred: $e");
+            _showErrorMessage("Login error: ${e.toString()}");
           }
         } else {
           _showErrorMessage("Please fill all fields");
@@ -186,7 +173,7 @@ class _CreateAccountState extends State<CreateAccount> {
         ),
         alignment: Alignment.center,
         child: const Text(
-          "Sign Up",
+          "Login",
           style: TextStyle(
             color: Colors.white,
             fontSize: 20,
@@ -227,9 +214,16 @@ class _CreateAccountState extends State<CreateAccount> {
     }
   }
 
+  void _showSuccessMessage(String message) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message), backgroundColor: Colors.green),
+      );
+    }
+  }
+
   @override
   void dispose() {
-    _name.dispose();
     _email.dispose();
     _password.dispose();
     super.dispose();

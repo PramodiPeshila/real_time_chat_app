@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:realtime_chat_app/models/connection_request.dart';
-import 'package:realtime_chat_app/services/contact_service.dart';
+import 'package:realtime_chat_app/controllers/contact_service.dart';
 
 class ConnectionRequestService {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
