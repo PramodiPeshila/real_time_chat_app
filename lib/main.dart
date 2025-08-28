@@ -36,12 +36,7 @@ Future<void> main() async {
     PendingInstantChatWatcher.setNavigatorKey(navigatorKey);
     print('✅ PendingInstantChatWatcher initialized');
 
-    // 🔹 Test Firestore connection (optional)
-    // await FirebaseFirestore.instance.collection("test").add({
-    //   "message": "Hello Firestore 🚀",
-    //   "timestamp": DateTime.now(),
-    // });
-    // print("✅ .yeeeeeeeeeeeeeeeeeeeh.Test document added to Firestore");
+   
   } catch (e) {
     print('❌ Firebase initialization error: $e');
   }
