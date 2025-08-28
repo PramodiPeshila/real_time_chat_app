@@ -6,9 +6,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class ContactService {
   static const String _contactsKey = 'user_contacts';
 
-  // ----------------------------
+
   // Local (SharedPreferences) methods
-  // ----------------------------
+  
   static Future<List<Contact>> getContacts() async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -70,10 +70,10 @@ class ContactService {
     }
   }
 
-  // ----------------------------
+
   // Firestore-backed methods (per authenticated owner)
   // Contacts are stored under: users/{ownerId}/contacts/{contactId}
-  // ----------------------------
+
 
   static CollectionReference<Map<String, dynamic>> _ownerContactsRef(String ownerId) {
     return FirebaseFirestore.instance
@@ -152,9 +152,8 @@ class ContactService {
     }
   }
 
-  // ----------------------------
   // High-level wrappers and migration
-  // ----------------------------
+  
 
   /// Fetch contacts. If [ownerId] is provided, loads from Firestore; otherwise loads local.
   static Future<List<Contact>> fetchContacts({String? ownerId}) async {
